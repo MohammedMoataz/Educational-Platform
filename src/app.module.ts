@@ -27,6 +27,7 @@ import { Attendance } from './entities/attendance.entity'
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
+      // type: 'mysql' as DatabaseType,
       host: 'localhost',
       port: 3306,
       username: 'root',
@@ -44,6 +45,7 @@ import { Attendance } from './entities/attendance.entity'
         AssessmentSubmission,
       ],
       synchronize: true,
+      // autoLoadEntities: true,
     }),
     UserModule,
     LectureModule,

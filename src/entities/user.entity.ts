@@ -27,9 +27,9 @@ export class User {
     disabled: boolean
     @Column({ nullable: false })
     _created_at: Date
-    @Column()
+    @Column({nullable: true})
     _updated_at: Date
-    @Column()
+    @Column({nullable: true})
     _deleted_at: Date
 
     @OneToMany(type => Course, course => course.teacher)

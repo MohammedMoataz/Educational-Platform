@@ -1,6 +1,7 @@
 import {
     Column,
     Entity,
+    JoinColumn,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn
@@ -22,12 +23,13 @@ export class Course {
     teacher_id: number
     @Column({ nullable: false })
     _created_at: Date
-    @Column()
+    @Column({nullable: true})
     _updated_at: Date
-    @Column()
+    @Column({nullable: true})
     _deleted_at: Date
 
     @ManyToOne(type => User, user => user.courses)
+    @JoinColumn({ name: "teacher_id" })
     teacher: User
 
     @OneToMany(type => CourseMaterial, (courseMaterial) => courseMaterial.course)

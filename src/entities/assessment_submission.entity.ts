@@ -21,7 +21,7 @@ export class AssessmentSubmission {
     score: number
     @Column()
     grade: string
-    @Column()
+    @Column({ nullable: true })
     feedback: string
     @Column({ nullable: false })
     _created_at: Date

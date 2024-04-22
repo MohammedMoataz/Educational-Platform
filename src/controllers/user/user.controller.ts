@@ -22,15 +22,15 @@ export class UserController {
     constructor(private userService: UserService) { }
 
     @ApiTags('User APIs')
-    @Get('/all')
+    @Get('all')
     @UseInterceptors(UserInterceptor)
     getUsers() {
         return this.userService.findAll()
     }
 
     @ApiTags('User APIs')
-    @Get('/:id')
-    getUser(id: number) {
+    @Get(':id')
+    getUser(@Query('id', ParseIntPipe) id: number) {
         return this.userService.findOneById(id)
     }
 
@@ -41,13 +41,13 @@ export class UserController {
     }
 
     @ApiTags('User APIs')
-    @Put('/:id')
+    @Put(':id')
     updateUser(@Query('id', ParseIntPipe) id: number, @Body() updatedUserParams: UserParams) {
         return this.userService.update(id, updatedUserParams)
     }
 
     @ApiTags('User APIs')
-    @Delete('/:id')
+    @Delete(':id')
     removeUser(@Query('id', ParseIntPipe) id: number) {
         return this.userService.remove(id)
     }

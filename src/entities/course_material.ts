@@ -1,6 +1,7 @@
 import {
     Column,
     Entity,
+    JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn
 } from "typeorm"
@@ -20,11 +21,12 @@ export class CourseMaterial {
     course_id: number
     @Column({ nullable: false })
     _created_at: Date
-    @Column()
+    @Column({nullable: true})
     _updated_at: Date
-    @Column()
+    @Column({nullable: true})
     _deleted_at: Date
 
     @ManyToOne(type => Course, course => course.course_materials)
+    @JoinColumn({ name: "course_id" })
     course: Course
 }
