@@ -35,11 +35,6 @@ export class CreateAssessmentDto {
     @ApiProperty()
     @IsNotEmpty()
     solution: string
-    @ApiProperty()
-    lecture: LectureDto
-    @ApiProperty()
-    @IsNotEmpty()
-    _created_at: Date
 }
 
 export class UpdateAssessmentDto {
@@ -51,8 +46,4 @@ export class UpdateAssessmentDto {
     type: string
     @ApiProperty()
     solution: string
-    @ApiProperty()
-    lecture: LectureDto
-    @ApiProperty()
-    _updated_at: Date
 }

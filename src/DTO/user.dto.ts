@@ -3,16 +3,25 @@ import { EnrollmentDto } from "./enrollment.dto"
 import { AssessmentSubmissionDto } from "./assessment_submission.dto"
 import { AttendanceDto } from "./attendance.dto"
 import { CourseDto } from "./course.dto"
-import { IsEmail, IsNotEmpty } from "class-validator"
-import { Transform } from "class-transformer"
+import { IsDateString, IsEmail, IsNotEmpty, IsStrongPassword } from "class-validator"
+import { Exclude, Transform } from "class-transformer"
 
 export class UserDto {
+    constructor(partial: UserDto) {
+        Object.assign(this, partial)
+    }
+
+    @Exclude()
+    id: number
     @ApiProperty()
     first_name: any
     @ApiProperty()
     last_name: any
     @ApiProperty()
+    @IsEmail()
     email: string
+    @Exclude()
+    password_hash: string
     @ApiProperty({ enum: ["student", "teacher", "administrator"] })
     role: "student" | "teacher" | "administrator" | string
     @ApiProperty()
@@ -29,6 +38,8 @@ export class UserDto {
     _created_at: Date
     @ApiProperty()
     _updated_at: Date
+    @Exclude()
+    _deleted_at: Date
 }
 
 export class CreateUserDto {
@@ -39,37 +50,27 @@ export class CreateUserDto {
     @IsNotEmpty()
     last_name: string
     @ApiProperty()
-    @Transform(value => value.toString().toLowerCase())
+    @IsNotEmpty()
     email: string
-    @ApiProperty()
+    @ApiProperty({ minLength: 8 })
     @IsNotEmpty()
     password: string
     @ApiProperty({ enum: ["student", "teacher", "administrator"] })
-    @IsNotEmpty({})
+    @IsNotEmpty()
     role: "student" | "teacher" | "administrator"
     @ApiProperty()
     disabled: boolean
-    @ApiProperty()
-    @IsNotEmpty()
-    _created_at: Date
 }
 
 export class UpdateUserDto {
     @ApiProperty()
-    @IsNotEmpty()
     first_name: string
     @ApiProperty()
-    @IsNotEmpty()
     last_name: string
     @ApiProperty()
-    @IsNotEmpty()
     email: string
-    @ApiProperty()
-    @IsNotEmpty()
+    @ApiProperty({ minLength: 8 })
     password: string
     @ApiProperty()
     disabled: boolean
-    @ApiProperty()
-    @IsNotEmpty()
-    _updated_at: Date
 }

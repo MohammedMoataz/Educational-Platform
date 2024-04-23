@@ -27,11 +27,6 @@ export class CreateCourseMaterialDto {
     @ApiProperty()
     @IsNotEmpty()
     file_url: string
-    @ApiProperty()
-    course: CourseDto
-    @ApiProperty()
-    @IsNotEmpty()
-    _created_at: Date
 }
 
 export class UpdateCourseMaterialDto {
@@ -41,8 +36,4 @@ export class UpdateCourseMaterialDto {
     description: string
     @ApiProperty()
     file_url: string
-    @ApiProperty()
-    course: CourseDto
-    @ApiProperty()
-    _updated_at: Date
 }

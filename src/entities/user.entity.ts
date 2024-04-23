@@ -32,15 +32,15 @@ export class User {
     @Column({nullable: true})
     _deleted_at: Date
 
-    @OneToMany(type => Course, course => course.teacher)
+    @OneToMany(() => Course, course => course.teacher)
     courses: Course[]
 
-    @OneToMany(type => Enrollment, enrollment => enrollment.student)
+    @OneToMany(() => Enrollment, enrollment => enrollment.student)
     enrollments: Enrollment[]
 
-    @OneToMany(type => Attendance, attendance => attendance.student)
+    @OneToMany(() => Attendance, attendance => attendance.student)
     attendances: Attendance[]
 
-    @OneToMany(type => AssessmentSubmission, assessmentSubmissions => assessmentSubmissions.user)
+    @OneToMany(() => AssessmentSubmission, assessmentSubmissions => assessmentSubmissions.user)
     assessmentSubmissions: AssessmentSubmission[]
 }

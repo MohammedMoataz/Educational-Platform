@@ -1,13 +1,18 @@
 import {
     Body,
+    ClassSerializerInterceptor,
     Controller,
     Delete,
     Get,
+    HttpException,
+    HttpStatus,
     ParseIntPipe,
     Post,
     Put,
     Query,
-    UseInterceptors
+    UseInterceptors,
+    UsePipes,
+    ValidationPipe
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { CreateUserDto, UpdateUserDto } from 'src/DTO/user.dto'
@@ -28,24 +33,32 @@ export class UserController {
 
     @ApiTags('User APIs')
     @Get(':id')
+    @UsePipes(ValidationPipe)
+    @UseInterceptors(ClassSerializerInterceptor)
     getUser(@Query('id', ParseIntPipe) id: number) {
-        return this.userService.findOneById(id)
+        const user = this.userService.findOneById(id)
+
+        if (user) return user
+        else throw new HttpException('User not found', HttpStatus.NOT_FOUND)
     }
 
     @ApiTags('User APIs')
     @Post()
+    @UsePipes(ValidationPipe)
     createUser(@Body() newUser: CreateUserDto) {
         return this.userService.create(newUser)
     }
 
     @ApiTags('User APIs')
     @Put(':id')
+    @UsePipes(ValidationPipe)
     updateUser(@Query('id', ParseIntPipe) id: number, @Body() updatedUser: UpdateUserDto) {
         return this.userService.update(id, updatedUser)
     }
 
     @ApiTags('User APIs')
     @Delete(':id')
+    @UsePipes(ValidationPipe)
     removeUser(@Query('id', ParseIntPipe) id: number) {
         return this.userService.remove(id)
     }

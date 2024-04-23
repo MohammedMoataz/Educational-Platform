@@ -28,16 +28,16 @@ export class Course {
     @Column({nullable: true})
     _deleted_at: Date
 
-    @ManyToOne(type => User, user => user.courses)
+    @ManyToOne(() => User, user => user.courses)
     @JoinColumn({ name: "teacher_id" })
     teacher: User
 
-    @OneToMany(type => CourseMaterial, (courseMaterial) => courseMaterial.course)
+    @OneToMany(() => CourseMaterial, (courseMaterial) => courseMaterial.course)
     course_materials: CourseMaterial[]
 
-    @OneToMany(type => Lecture, (lecture) => lecture.course)
+    @OneToMany(() => Lecture, (lecture) => lecture.course)
     lectures: Lecture[]
 
-    @OneToMany(type => Enrollment, enrollment => enrollment.course)
+    @OneToMany(() => Enrollment, enrollment => enrollment.course)
     enrollments: Enrollment[]
 }

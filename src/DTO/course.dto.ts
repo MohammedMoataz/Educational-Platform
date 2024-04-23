@@ -4,12 +4,21 @@ import { CourseMaterialDto } from "./course_material.dto"
 import { LectureDto } from "./lecture.dto"
 import { EnrollmentDto } from "./enrollment.dto"
 import { IsNotEmpty } from "class-validator"
+import { Exclude } from "class-transformer"
 
 export class CourseDto {
+    constructor(partial: CourseDto) {
+        Object.assign(this, partial)
+    }
+
+    @Exclude()
+    id: string
     @ApiProperty()
     name: string
     @ApiProperty()
     description: string
+    @Exclude()
+    teacher_id: number
     @ApiProperty()
     teacher: UserDto
     @ApiProperty()
@@ -32,9 +41,8 @@ export class CreateCourseDto {
     @IsNotEmpty()
     description: string
     @ApiProperty()
-    teacher: UserDto
-    @ApiProperty()
-    _created_at: Date
+    @IsNotEmpty()
+    teacher_id: number
 }
 
 export class UpdateCourseDto {
@@ -43,7 +51,5 @@ export class UpdateCourseDto {
     @ApiProperty()
     description: string
     @ApiProperty()
-    teacher: UserDto
-    @ApiProperty()
-    _updated_at: Date
+    teacher_id: number
 }

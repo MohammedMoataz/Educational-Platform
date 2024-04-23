@@ -22,10 +22,6 @@ export class AssessmentSubmissionDto {
 
 export class CreateAssessmentSubmissionDto {
     @ApiProperty()
-    user: UserDto
-    @ApiProperty()
-    assessment: AssessmentDto
-    @ApiProperty()
     @IsNotEmpty()
     submission_date: Date
     @ApiProperty()
@@ -36,7 +32,4 @@ export class CreateAssessmentSubmissionDto {
     grade: string
     @ApiProperty()
     feedback: string
-    @ApiProperty()
-    @IsNotEmpty()
-    _created_at: Date
 }

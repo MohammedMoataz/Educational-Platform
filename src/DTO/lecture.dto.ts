@@ -28,11 +28,6 @@ export class CreateLectureDto {
     @ApiProperty()
     @IsNotEmpty()
     content: string
-    @ApiProperty()
-    course: CourseDto
-    @ApiProperty()
-    @IsNotEmpty()
-    _created_at: Date
 }
 
 export class UpdateLectureDto {
@@ -40,12 +35,4 @@ export class UpdateLectureDto {
     title: string
     @ApiProperty()
     content: string
-    @ApiProperty()
-    course: CourseDto
-    @ApiProperty()
-    assessments: AssessmentDto[]
-    @ApiProperty()
-    attendances: AttendanceDto[]
-    @ApiProperty()
-    _updated_at: Date
 }

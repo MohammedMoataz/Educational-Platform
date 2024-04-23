@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { User } from './entities/user.entity'
@@ -6,6 +6,7 @@ import { Lecture } from './entities/lecture.entity'
 import { Enrollment } from './entities/enrollment.entity'
 import { Course } from './entities/course.entity'
 import { CourseMaterial } from './entities/course_material'
+import { Attendance } from './entities/attendance.entity'
 import { Assessment } from './entities/assessment.entity'
 import { AssessmentSubmission } from './entities/assessment_submission.entity'
 
@@ -21,7 +22,8 @@ import { CourseMaterialModule } from './modules/course_material/course_material.
 import { AssessmentModule } from './modules/assessment/assessment.module'
 import { AssessmentSubmissionModule } from './modules/assessment_submission/assessment_submission.module'
 import { AttendanceModule } from './modules/attendance/attendance.module'
-import { Attendance } from './entities/attendance.entity'
+
+import { CreateLogger, UpdateLogger } from './middlewares/date-logger.middleware'
 
 @Module({
   imports: [
@@ -59,4 +61,19 @@ import { Attendance } from './entities/attendance.entity'
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CreateLogger)
+      .forRoutes({
+        path: "*",
+        method: RequestMethod.POST
+      })
+      .apply(UpdateLogger)
+      .forRoutes({
+        path: "*",
+        method: RequestMethod.PUT
+      })
+  }
+}
+
