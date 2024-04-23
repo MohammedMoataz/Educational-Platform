@@ -9,9 +9,8 @@ import {
     Query
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { LectureDto } from 'src/DTO/lecture.dto'
+import { CreateLectureDto, LectureDto, UpdateLectureDto } from 'src/DTO/lecture.dto'
 import { LectureService } from 'src/services/lecture/lecture.service'
-import { LectureParams } from 'src/utils/type'
 
 @Controller('lecture')
 export class LectureController {
@@ -31,14 +30,14 @@ export class LectureController {
 
     @ApiTags('Lecture APIs')
     @Post()
-    createLecture(@Body() createLectureParams: LectureParams) {
-        return this.lectureService.create(createLectureParams)
+    createLecture(@Body() newLecture: CreateLectureDto) {
+        return this.lectureService.create(newLecture)
     }
 
     @ApiTags('Lecture APIs')
     @Put('/:id')
-    updateLecture(@Query('id', ParseIntPipe) id: number, @Body() updatedLectureParams: LectureParams) {
-        return this.lectureService.update(id, updatedLectureParams)
+    updateLecture(@Query('id', ParseIntPipe) id: number, @Body() updatedLecture: UpdateLectureDto) {
+        return this.lectureService.update(id, updatedLecture)
     }
 
     @ApiTags('Lecture APIs')

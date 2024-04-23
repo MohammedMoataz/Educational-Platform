@@ -10,3 +10,12 @@ export class AttendanceDto {
     @ApiProperty()
     _created_at: Date
 }
+
+export class CreateAttendanceDto {
+    @ApiProperty()
+    student: UserDto
+    @ApiProperty()
+    lecture: LectureDto
+    @ApiProperty()
+    _created_at: Date
+}

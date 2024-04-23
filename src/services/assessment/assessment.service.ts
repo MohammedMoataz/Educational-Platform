@@ -5,8 +5,7 @@ import { Repository } from 'typeorm'
 import { Assessment } from 'src/entities/assessment.entity'
 import { AssessmentSubmission } from 'src/entities/assessment_submission.entity'
 import { Lecture } from 'src/entities/lecture.entity'
-import { AssessmentDto } from 'src/DTO/assessment.dto'
-import { AssessmentParams } from 'src/utils/type'
+import { AssessmentDto, CreateAssessmentDto, UpdateAssessmentDto } from 'src/DTO/assessment.dto'
 
 @Injectable()
 export class AssessmentService {
@@ -18,18 +17,23 @@ export class AssessmentService {
     ) { }
 
     async findAll(): Promise<Assessment[]> {
-        return await this.assessmentRepository.find({ relations: ['student', 'lecture'] })
+        return await this.assessmentRepository.find({
+            relations: ['student', 'lecture']
+        })
     }
 
     async findOneById(id: number): Promise<Assessment> {
-        return await this.assessmentRepository.findOneBy({ id })
+        return await this.assessmentRepository.findOne({
+            where: { id },
+            relations: ['student', 'lecture']
+        })
     }
 
-    async create(newAssessment: AssessmentParams): Promise<Assessment> {
+    async create(newAssessment: CreateAssessmentDto): Promise<Assessment> {
         return await this.assessmentRepository.save(newAssessment)
     }
 
-    async update(id: number, updatedAssessment: AssessmentParams): Promise<any> {
+    async update(id: number, updatedAssessment: UpdateAssessmentDto): Promise<any> {
         return await this.assessmentRepository.update({ id }, updatedAssessment)
     }
 

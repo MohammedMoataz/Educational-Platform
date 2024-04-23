@@ -9,9 +9,8 @@ import {
     Query
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { CourseMaterialDto } from 'src/DTO/course_material.dto'
+import { CourseMaterialDto, CreateCourseMaterialDto, UpdateCourseMaterialDto } from 'src/DTO/course_material.dto'
 import { CourseMaterialService } from 'src/services/course_material/course_material.service'
-import { CourseMaterialParams } from 'src/utils/type'
 
 @Controller('course-material')
 export class CourseMaterialController {
@@ -31,14 +30,14 @@ export class CourseMaterialController {
 
     @ApiTags("Course APIs")
     @Post()
-    createcourseMaterials(@Body() createCourseMaterialsParams: CourseMaterialParams) {
-        return this.CourseMaterialService.create(createCourseMaterialsParams)
+    createcourseMaterials(@Body() newCourseMaterials: CreateCourseMaterialDto) {
+        return this.CourseMaterialService.create(newCourseMaterials)
     }
 
     @ApiTags("Course APIs")
     @Put('/:id')
-    updatecourseMaterials(@Query('id', ParseIntPipe) id: number, @Body() updatedCourseMaterialsParams: CourseMaterialParams) {
-        return this.CourseMaterialService.update(id, updatedCourseMaterialsParams)
+    updatecourseMaterials(@Query('id', ParseIntPipe) id: number, @Body() updatedCourseMaterials: UpdateCourseMaterialDto) {
+        return this.CourseMaterialService.update(id, updatedCourseMaterials)
     }
 
     @ApiTags("Course APIs")

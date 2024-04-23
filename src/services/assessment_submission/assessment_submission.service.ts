@@ -5,8 +5,7 @@ import { Repository } from 'typeorm'
 import { AssessmentSubmission } from 'src/entities/assessment_submission.entity'
 import { Assessment } from 'src/entities/assessment.entity'
 import { User } from 'src/entities/user.entity'
-import { AssessmentSubmissionDto } from 'src/DTO/assessment_submission.dto'
-import { AssessmentSubmissionParams } from 'src/utils/type'
+import { AssessmentSubmissionDto, CreateAssessmentSubmissionDto } from 'src/DTO/assessment_submission.dto'
 
 @Injectable()
 export class AssessmentSubmissionService {
@@ -18,22 +17,19 @@ export class AssessmentSubmissionService {
     ) { }
 
     async findAll(): Promise<AssessmentSubmission[]> {
-        return await this.assessmentSubmissionRepository.find({ relations: ['student', 'lecture'] })
+        return await this.assessmentSubmissionRepository.find({
+            relations: ['student', 'lecture']
+        })
     }
 
     async findOneById(id: number): Promise<AssessmentSubmission> {
-        return await this.assessmentSubmissionRepository.findOneBy({ id })
+        return await this.assessmentSubmissionRepository.findOne({
+            where: { id },
+            relations: ['student', 'lecture']
+        })
     }
 
-    async create(newAssessmentSubmission: AssessmentSubmissionParams): Promise<AssessmentSubmission> {
+    async create(newAssessmentSubmission: CreateAssessmentSubmissionDto): Promise<AssessmentSubmission> {
         return await this.assessmentSubmissionRepository.save(newAssessmentSubmission)
-    }
-
-    async update(id: number, updatedAssessmentSubmission: AssessmentSubmissionParams): Promise<any> {
-        return await this.assessmentSubmissionRepository.update({ id }, updatedAssessmentSubmission)
-    }
-
-    async remove(id: number): Promise<any> {
-        return await this.assessmentSubmissionRepository.delete({ id })
     }
 }

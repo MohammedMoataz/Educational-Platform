@@ -5,8 +5,7 @@ import { Repository } from 'typeorm'
 import { Attendance } from 'src/entities/attendance.entity'
 import { Lecture } from 'src/entities/lecture.entity'
 import { User } from 'src/entities/user.entity'
-import { AttendanceDto } from 'src/DTO/attendance.dto'
-import { AttendanceParams } from 'src/utils/type'
+import { AttendanceDto, CreateAttendanceDto } from 'src/DTO/attendance.dto'
 
 @Injectable()
 export class AttendanceService {
@@ -18,22 +17,19 @@ export class AttendanceService {
     ) { }
 
     async findAll(): Promise<Attendance[]> {
-        return await this.attendanceRepository.find({ relations: ['student', 'lecture'] })
+        return await this.attendanceRepository.find({
+            relations: ['student', 'lecture']
+        })
     }
 
     async findOneById(id: number): Promise<Attendance> {
-        return await this.attendanceRepository.findOneBy({ id })
+        return await this.attendanceRepository.findOne({
+            where: { id },
+            relations: ['student', 'lecture']
+        })
     }
 
-    async create(newAttendance: AttendanceParams): Promise<Attendance> {
+    async create(newAttendance: CreateAttendanceDto): Promise<Attendance> {
         return await this.attendanceRepository.save(newAttendance)
-    }
-
-    async update(id: number, updatedAttendance: AttendanceParams): Promise<any> {
-        return await this.attendanceRepository.update({ id }, updatedAttendance)
-    }
-
-    async remove(id: number): Promise<any> {
-        return await this.attendanceRepository.delete({ id })
     }
 }

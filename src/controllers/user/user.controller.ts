@@ -3,7 +3,6 @@ import {
     Controller,
     Delete,
     Get,
-    Param,
     ParseIntPipe,
     Post,
     Put,
@@ -11,11 +10,10 @@ import {
     UseInterceptors
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { UserDto } from 'src/DTO/user.dto'
+import { CreateUserDto, UpdateUserDto } from 'src/DTO/user.dto'
 import { UserInterceptor } from 'src/interceptors/user.interceptor'
 
 import { UserService, } from 'src/services/user/user.service'
-import { UserParams } from 'src/utils/type'
 
 @Controller('/user')
 export class UserController {
@@ -36,14 +34,14 @@ export class UserController {
 
     @ApiTags('User APIs')
     @Post()
-    createUser(@Body() newUser: UserParams) {
+    createUser(@Body() newUser: CreateUserDto) {
         return this.userService.create(newUser)
     }
 
     @ApiTags('User APIs')
     @Put(':id')
-    updateUser(@Query('id', ParseIntPipe) id: number, @Body() updatedUserParams: UserParams) {
-        return this.userService.update(id, updatedUserParams)
+    updateUser(@Query('id', ParseIntPipe) id: number, @Body() updatedUser: UpdateUserDto) {
+        return this.userService.update(id, updatedUser)
     }
 
     @ApiTags('User APIs')

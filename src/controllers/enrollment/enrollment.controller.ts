@@ -9,9 +9,8 @@ import {
     Query
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { EnrollmentDto } from 'src/DTO/enrollment.dto'
+import { CreateEnrollmentDto, EnrollmentDto, UpdateEnrollmentDto } from 'src/DTO/enrollment.dto'
 import { EnrollmentService } from 'src/services/enrollment/enrollment.service'
-import { EnrollmentParams } from 'src/utils/type'
 
 @Controller('enrollment')
 export class EnrollmentController {
@@ -31,14 +30,14 @@ export class EnrollmentController {
 
     @ApiTags("Course APIs", "User APIs")
     @Post()
-    createEnrollment(@Body() createEnrollmentParams: EnrollmentParams) {
-        return this.EnrollmentService.create(createEnrollmentParams)
+    createEnrollment(@Body() newEnrollment: CreateEnrollmentDto) {
+        return this.EnrollmentService.create(newEnrollment)
     }
 
     @ApiTags("Course APIs", "User APIs")
     @Put('/:id')
-    updateEnrollment(@Query('id', ParseIntPipe) id: number, @Body() updatedEnrollmentParams: EnrollmentParams) {
-        return this.EnrollmentService.update(id, updatedEnrollmentParams)
+    updateEnrollment(@Query('id', ParseIntPipe) id: number, @Body() deletedEnrollment: UpdateEnrollmentDto) {
+        return this.EnrollmentService.update(id, deletedEnrollment)
     }
 
     @ApiTags("Course APIs", "User APIs")

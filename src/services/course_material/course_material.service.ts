@@ -4,8 +4,7 @@ import { Repository } from 'typeorm'
 
 import { CourseMaterial } from 'src/entities/course_material'
 import { Course } from 'src/entities/course.entity'
-import { CourseMaterialDto } from 'src/DTO/course_material.dto'
-import { CourseMaterialParams } from 'src/utils/type'
+import { CourseMaterialDto, CreateCourseMaterialDto, UpdateCourseMaterialDto } from 'src/DTO/course_material.dto'
 
 @Injectable()
 export class CourseMaterialService {
@@ -16,18 +15,23 @@ export class CourseMaterialService {
     ) { }
 
     async findAll(): Promise<CourseMaterial[]> {
-        return await this.courseMaterialRepository.find({ relations: ['course'] })
+        return await this.courseMaterialRepository.find({
+            relations: ['course']
+        })
     }
 
     async findOneById(id: number): Promise<CourseMaterial> {
-        return await this.courseMaterialRepository.findOneBy({ id })
+        return await this.courseMaterialRepository.findOne({
+            where: { id },
+            relations: ['course']
+        })
     }
 
-    async create(newCourseMaterial: CourseMaterialParams): Promise<CourseMaterial> {
+    async create(newCourseMaterial: CreateCourseMaterialDto): Promise<CourseMaterial> {
         return await this.courseMaterialRepository.save(newCourseMaterial)
     }
 
-    async update(id: number, updatedCourseMaterial: CourseMaterialParams): Promise<any> {
+    async update(id: number, updatedCourseMaterial: UpdateCourseMaterialDto): Promise<any> {
         return await this.courseMaterialRepository.update({ id }, updatedCourseMaterial)
     }
 

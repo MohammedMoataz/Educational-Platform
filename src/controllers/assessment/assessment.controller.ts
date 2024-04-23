@@ -9,9 +9,8 @@ import {
     Query
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { AssessmentDto } from 'src/DTO/assessment.dto'
+import { AssessmentDto, CreateAssessmentDto, UpdateAssessmentDto } from 'src/DTO/assessment.dto'
 import { AssessmentService } from 'src/services/assessment/assessment.service'
-import { AssessmentParams } from 'src/utils/type'
 
 @Controller('assessment')
 export class AssessmentController {
@@ -19,31 +18,31 @@ export class AssessmentController {
 
     @ApiTags("Assessment APIs")
     @Get('/all')
-    getAssessmentss() {
+    getAssessments() {
         return this.AssessmentService.findAll()
     }
 
     @ApiTags("Assessment APIs")
     @Get('/:id')
-    getAssessments(id: number) {
+    getAssessment(id: number) {
         return this.AssessmentService.findOneById(id)
     }
 
     @ApiTags("Assessment APIs")
     @Post()
-    createAssessments(@Body() createAssessmentsParams: AssessmentParams) {
-        return this.AssessmentService.create(createAssessmentsParams)
+    createAssessment(@Body() newAssessment: CreateAssessmentDto) {
+        return this.AssessmentService.create(newAssessment)
     }
 
     @ApiTags("Assessment APIs")
     @Put('/:id')
-    updateAssessments(@Query('id', ParseIntPipe) id: number, @Body() updatedAssessmentsParams: AssessmentParams) {
-        return this.AssessmentService.update(id, updatedAssessmentsParams)
+    updateAssessment(@Query('id', ParseIntPipe) id: number, @Body() updatedAssessment: UpdateAssessmentDto) {
+        return this.AssessmentService.update(id, updatedAssessment)
     }
 
     @ApiTags("Assessment APIs")
     @Delete('/:id')
-    removeAssessments(@Query('id', ParseIntPipe) id: number) {
+    removeAssessment(@Query('id', ParseIntPipe) id: number) {
         return this.AssessmentService.remove(id)
     }
 }

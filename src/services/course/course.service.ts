@@ -6,8 +6,7 @@ import { Course } from 'src/entities/course.entity'
 import { CourseMaterial } from 'src/entities/course_material'
 import { Enrollment } from 'src/entities/enrollment.entity'
 import { Lecture } from 'src/entities/lecture.entity'
-import { CourseParams } from 'src/utils/type'
-import { CourseDto } from 'src/DTO/course.dto'
+import { CourseDto, CreateCourseDto, UpdateCourseDto } from 'src/DTO/course.dto'
 
 @Injectable()
 export class CourseService {
@@ -20,18 +19,23 @@ export class CourseService {
     ) { }
 
     async findAll(): Promise<Course[]> {
-        return await this.courseRepository.find({ relations: ['teacher', 'course_materials', 'lectures', 'enrollments'] })
+        return await this.courseRepository.find({
+            relations: ['teacher', 'course_materials', 'lectures', 'enrollments']
+        })
     }
 
     async findOneById(id: number): Promise<Course> {
-        return await this.courseRepository.findOneBy({ id })
+        return await this.courseRepository.findOne({
+            where: { id },
+            relations: ['teacher', 'course_materials', 'lectures', 'enrollments']
+        })
     }
 
-    async create(newCourse: CourseParams): Promise<Course> {
+    async create(newCourse: CreateCourseDto): Promise<Course> {
         return await this.courseRepository.save(newCourse)
     }
 
-    async update(id: number, updatedCourse: CourseParams): Promise<any> {
+    async update(id: number, updatedCourse: UpdateCourseDto): Promise<any> {
         return await this.courseRepository.update({ id }, updatedCourse)
     }
 

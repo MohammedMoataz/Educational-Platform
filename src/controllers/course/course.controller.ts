@@ -9,9 +9,8 @@ import {
     Query
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { CourseDto } from 'src/DTO/course.dto'
+import { CourseDto, CreateCourseDto, UpdateCourseDto } from 'src/DTO/course.dto'
 import { CourseService } from 'src/services/course/course.service'
-import { CourseParams } from 'src/utils/type'
 
 @Controller('course')
 export class CourseController {
@@ -31,14 +30,14 @@ export class CourseController {
 
     @ApiTags("Course APIs")
     @Post()
-    createcourses(@Body() createCoursesParams: CourseParams) {
-        return this.CourseService.create(createCoursesParams)
+    createcourses(@Body() newCourses: CreateCourseDto) {
+        return this.CourseService.create(newCourses)
     }
 
     @ApiTags("Course APIs")
     @Put('/:id')
-    updatecourses(@Query('id', ParseIntPipe) id: number, @Body() updatedCoursesParamso: CourseParams) {
-        return this.CourseService.update(id, updatedCoursesParamso)
+    updatecourses(@Query('id', ParseIntPipe) id: number, @Body() updatedCourses: UpdateCourseDto) {
+        return this.CourseService.update(id, updatedCourses)
     }
 
     @ApiTags("Course APIs")

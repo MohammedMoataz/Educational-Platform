@@ -5,8 +5,7 @@ import { Repository } from 'typeorm'
 import { Enrollment } from 'src/entities/enrollment.entity'
 import { Course } from 'src/entities/course.entity'
 import { User } from 'src/entities/user.entity'
-import { EnrollmentDto } from 'src/DTO/enrollment.dto'
-import { EnrollmentParams, LectureParams } from 'src/utils/type'
+import { CreateEnrollmentDto, UpdateEnrollmentDto } from 'src/DTO/enrollment.dto'
 
 @Injectable()
 export class EnrollmentService {
@@ -18,18 +17,23 @@ export class EnrollmentService {
     ) { }
 
     async findAll(): Promise<Enrollment[]> {
-        return await this.enrollmentRepository.find({ relations: ['course', 'student'] })
+        return await this.enrollmentRepository.find({
+            relations: ['course', 'student']
+        })
     }
 
     async findOneById(id: number): Promise<Enrollment> {
-        return await this.enrollmentRepository.findOneBy({ id })
+        return await this.enrollmentRepository.findOne({
+            where: { id },
+            relations: ['course', 'student']
+        })
     }
 
-    async create(newEnrollment: EnrollmentParams): Promise<Enrollment> {
+    async create(newEnrollment: CreateEnrollmentDto): Promise<Enrollment> {
         return await this.enrollmentRepository.save(newEnrollment)
     }
 
-    async update(id: number, updatedEnrollment: EnrollmentParams): Promise<any> {
+    async update(id: number, updatedEnrollment: UpdateEnrollmentDto): Promise<any> {
         return await this.enrollmentRepository.update({ id }, updatedEnrollment)
     }
 
