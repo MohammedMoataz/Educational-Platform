@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
+
 import { AttendanceController } from 'src/controllers/attendance/attendance.controller'
 import { Attendance } from 'src/entities/attendance.entity'
 import { Lecture } from 'src/entities/lecture.entity'

@@ -6,6 +6,7 @@ import {
     OneToMany,
     PrimaryGeneratedColumn
 } from "typeorm"
+
 import { AssessmentSubmission } from "./assessment_submission.entity"
 import { Lecture } from "./lecture.entity"
 
@@ -30,10 +31,10 @@ export class Assessment {
     @Column({nullable: true})
     _deleted_at: Date
 
-    @OneToMany(type => AssessmentSubmission, submission => submission.assessment)
+    @OneToMany(() => AssessmentSubmission, submission => submission.assessment)
     assessmentSubmissions: AssessmentSubmission[]
     
-    @ManyToOne(type => Lecture, lecture => lecture.assessments)
+    @ManyToOne(() => Lecture, lecture => lecture.assessments)
     @JoinColumn({ name: "lecture_id" })
     lecture: Lecture
 }

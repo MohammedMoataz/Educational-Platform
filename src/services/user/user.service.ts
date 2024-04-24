@@ -38,6 +38,16 @@ export class UserService {
         else throw new NotFoundException(`User with id: ${id} not found`)
     }
 
+    async findOneByEmail(email: string): Promise<UserDto> {
+        const user = await this.userRepository.findOne({
+            where: { email },
+            relations: ['courses', 'enrollments', 'attendances', 'assessmentSubmissions']
+        })
+
+        if (user._deleted_at === null) return plainToClass(UserDto, user)
+        else throw new NotFoundException(`User with email: ${email} not found`)
+    }
+
     async create(newUser: CreateUserDto): Promise<User> {
         return await this.userRepository.save(newUser)
     }

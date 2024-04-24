@@ -5,44 +5,50 @@ import {
     Get,
     ParseIntPipe,
     Post,
-    Put,
-    Query
+    Query,
+    UsePipes,
+    ValidationPipe
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { CreateEnrollmentDto, EnrollmentDto, UpdateEnrollmentDto } from 'src/DTO/enrollment.dto'
+
+import { CreateEnrollmentDto, DeletedEnrollmentDto } from 'src/DTO/enrollment.dto'
 import { EnrollmentService } from 'src/services/enrollment/enrollment.service'
 
-@Controller('enrollment')
+@Controller()
 export class EnrollmentController {
     constructor(private EnrollmentService: EnrollmentService) { }
 
-    @ApiTags("Course APIs", "User APIs")
-    @Get('/all')
-    getEnrollments() {
-        return this.EnrollmentService.findAll()
+    @ApiTags("User APIs")
+    @Get('user/enrollments')
+    getUserEnrollments(@Query('id', ParseIntPipe) id: number) {
+        return this.EnrollmentService.findAllbyUser(id)
+    }
+
+    @ApiTags("Course APIs")
+    @Get('course/enrollments')
+    getCourseEnrollments(@Query('id', ParseIntPipe) id: number) {
+        return this.EnrollmentService.findAllbyCourse(id)
     }
 
     @ApiTags("Course APIs", "User APIs")
-    @Get('/:id')
-    getEnrollment(id: number) {
-        return this.EnrollmentService.findOneById(id)
+    @Get('enrollment')
+    getEnrollment(
+        @Query('user_id', ParseIntPipe) user_id: number,
+        @Query('course_id', ParseIntPipe) course_id: number
+    ) {
+        return this.EnrollmentService.findOne(user_id, course_id)
     }
 
     @ApiTags("Course APIs", "User APIs")
-    @Post()
+    @Post('enrollment')
+    @UsePipes(ValidationPipe)
     createEnrollment(@Body() newEnrollment: CreateEnrollmentDto) {
         return this.EnrollmentService.create(newEnrollment)
     }
 
     @ApiTags("Course APIs", "User APIs")
-    @Put('/:id')
-    updateEnrollment(@Query('id', ParseIntPipe) id: number, @Body() deletedEnrollment: UpdateEnrollmentDto) {
-        return this.EnrollmentService.update(id, deletedEnrollment)
-    }
-
-    @ApiTags("Course APIs", "User APIs")
-    @Delete('/:id')
-    removeEnrollment(@Query('id', ParseIntPipe) id: number) {
-        return this.EnrollmentService.remove(id)
+    @Delete('enrollment')
+    removeEnrollment(@Query('deletedEnrollment', ParseIntPipe) deletedEnrollment: DeletedEnrollmentDto) {
+        return this.EnrollmentService.remove(deletedEnrollment)
     }
 }

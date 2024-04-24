@@ -5,6 +5,7 @@ import {
     ManyToOne,
     PrimaryGeneratedColumn
 } from "typeorm"
+
 import { User } from "./user.entity"
 import { Lecture } from "./lecture.entity"
 
@@ -13,7 +14,7 @@ export class Attendance {
     @PrimaryGeneratedColumn()
     id: number
     @Column()
-    user_id: number
+    student_id: number
     @Column()
     lecture_id: number
     @Column({ nullable: false })
@@ -21,11 +22,11 @@ export class Attendance {
     @Column({nullable: true})
     _deleted_at: Date
 
-    @ManyToOne(type => User, user => user.attendances)
+    @ManyToOne(() => User, user => user.attendances)
     @JoinColumn({ name: "student_id" })
     student: User
 
-    @ManyToOne(type => Lecture, lecture => lecture.attendances)
+    @ManyToOne(() => Lecture, lecture => lecture.attendances)
     @JoinColumn({ name: "lecture_id" })
     lecture: Lecture
 }

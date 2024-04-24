@@ -1,11 +1,21 @@
 import { ApiProperty } from "@nestjs/swagger"
+import { IsNotEmpty } from "class-validator"
+import { Exclude } from "class-transformer"
+
 import { UserDto } from "./user.dto"
 import { AssessmentDto } from "./assessment.dto"
-import { IsNotEmpty } from "class-validator"
 
 export class AssessmentSubmissionDto {
+    constructor(partial: AssessmentSubmissionDto) { Object.assign(this, partial) }
+
+    @Exclude()
+    id: number
+    @Exclude()
+    student_id: number
+    @Exclude()
+    assessment_id: number
     @ApiProperty()
-    user: UserDto
+    student: UserDto
     @ApiProperty()
     assessment: AssessmentDto
     @ApiProperty()
@@ -18,9 +28,19 @@ export class AssessmentSubmissionDto {
     feedback: string
     @ApiProperty()
     _created_at: Date
+    @ApiProperty()
+    _updated_at: Date
+    @Exclude()
+    _deleted_at: Date
 }
 
 export class CreateAssessmentSubmissionDto {
+    @ApiProperty()
+    @IsNotEmpty()
+    student_id: number
+    @ApiProperty()
+    @IsNotEmpty()
+    assessment_id: number
     @ApiProperty()
     @IsNotEmpty()
     submission_date: Date

@@ -26,6 +26,20 @@ export class CourseService {
         return courses
     }
 
+    async findAllByTeacher(teacher_id): Promise<CourseDto[]> {
+        const courses = await this.courseRepository.find({
+            where: { teacher_id },
+            relations: ['teacher', 'course_materials', 'lectures', 'enrollments']
+        })
+            .then(courses => courses.filter(course => course._deleted_at === null))
+            .then(courses => courses.map(course => plainToClass(CourseDto, course)))
+
+        if (!courses)
+            throw new NotFoundException(`Courses not found`)
+
+        return courses
+    }
+
     async findOneById(id: number): Promise<CourseDto> {
         const course = await this.courseRepository.findOne({
             where: { id },

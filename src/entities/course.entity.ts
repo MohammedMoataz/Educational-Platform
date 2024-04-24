@@ -6,7 +6,8 @@ import {
     OneToMany,
     PrimaryGeneratedColumn
 } from "typeorm"
-import { CourseMaterial } from "./course_material"
+
+import { CourseMaterial } from "./course_material.entity"
 import { Lecture } from "./lecture.entity"
 import { User } from "./user.entity"
 import { Enrollment } from "./enrollment.entity"

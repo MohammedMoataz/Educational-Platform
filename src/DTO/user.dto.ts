@@ -1,22 +1,21 @@
 import { ApiProperty } from "@nestjs/swagger"
+import { IsEmail, IsNotEmpty } from "class-validator"
+import { Exclude } from "class-transformer"
+
 import { EnrollmentDto } from "./enrollment.dto"
 import { AssessmentSubmissionDto } from "./assessment_submission.dto"
 import { AttendanceDto } from "./attendance.dto"
 import { CourseDto } from "./course.dto"
-import { IsDateString, IsEmail, IsNotEmpty, IsStrongPassword } from "class-validator"
-import { Exclude, Transform } from "class-transformer"
 
 export class UserDto {
-    constructor(partial: UserDto) {
-        Object.assign(this, partial)
-    }
+    constructor(partial: UserDto) { Object.assign(this, partial) }
 
     @Exclude()
     id: number
     @ApiProperty()
-    first_name: any
+    first_name: string
     @ApiProperty()
-    last_name: any
+    last_name: string
     @ApiProperty()
     @IsEmail()
     email: string

@@ -1,14 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-
-import { User } from './entities/user.entity'
-import { Lecture } from './entities/lecture.entity'
-import { Enrollment } from './entities/enrollment.entity'
-import { Course } from './entities/course.entity'
-import { CourseMaterial } from './entities/course_material'
-import { Attendance } from './entities/attendance.entity'
-import { Assessment } from './entities/assessment.entity'
-import { AssessmentSubmission } from './entities/assessment_submission.entity'
+import { config } from 'dotenv'
 
 import { AppService } from './app.service'
 
@@ -25,29 +17,37 @@ import { AttendanceModule } from './modules/attendance/attendance.module'
 
 import { CreateLogger, UpdateLogger } from './middlewares/date-logger.middleware'
 
+config()
+
+const DB_PORT = process.env.DB_PORT as string
+const DB_HOST = process.env.DB_HOST as string
+const DB_NAME = process.env.DB_NAME as string
+const DB_USER = process.env.DB_USER as string
+const DB_PASSWORD = process.env.DB_PASSWORD as string
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
       // type: 'mysql' as DatabaseType,
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root123',
-      database: 'educational_platform',
-      // entities: [__dirname + '/entities/*.entity.ts'],
-      entities: [
-        User,
-        Lecture,
-        Enrollment,
-        Course,
-        CourseMaterial,
-        Attendance,
-        Assessment,
-        AssessmentSubmission,
-      ],
-      synchronize: true,
+      host: DB_HOST,
+      port: parseInt(DB_PORT),
+      username: DB_USER,
+      password: DB_PASSWORD,
+      database: DB_NAME,
+      entities: [__dirname + '/entities/*.entity.ts'],
+      // entities: [
+      //   User,
+      //   Lecture,
+      //   Enrollment,
+      //   Course,
+      //   CourseMaterial,
+      //   Attendance,
+      //   Assessment,
+      //   AssessmentSubmission,
+      // ],
       // autoLoadEntities: true,
+      synchronize: true,
     }),
     UserModule,
     LectureModule,
@@ -65,15 +65,19 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(CreateLogger)
-      .forRoutes({
-        path: "*",
-        method: RequestMethod.POST
-      })
+      .forRoutes(
+        {
+          path: "*",
+          method: RequestMethod.POST
+        }
+      )
       .apply(UpdateLogger)
-      .forRoutes({
-        path: "*",
-        method: RequestMethod.PUT
-      })
+      .forRoutes(
+        {
+          path: "*",
+          method: RequestMethod.PUT
+        }
+      )
   }
 }
 

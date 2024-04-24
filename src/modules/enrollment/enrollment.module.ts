@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
+
 import { EnrollmentController } from 'src/controllers/enrollment/enrollment.controller'
 import { Course } from 'src/entities/course.entity'
 import { Enrollment } from 'src/entities/enrollment.entity'

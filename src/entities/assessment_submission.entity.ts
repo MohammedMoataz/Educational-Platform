@@ -4,6 +4,7 @@ import {
     ManyToOne,
     PrimaryGeneratedColumn
 } from "typeorm"
+
 import { Assessment } from "./assessment.entity"
 import { User } from "./user.entity"
 
@@ -12,7 +13,7 @@ export class AssessmentSubmission {
     @PrimaryGeneratedColumn()
     id: number
     @Column()
-    user_id: number
+    student_id: number
     @Column()
     assessment_id: number
     @Column()
@@ -26,9 +27,9 @@ export class AssessmentSubmission {
     @Column({ nullable: false })
     _created_at: Date
 
-    @ManyToOne(type => Assessment, assessment => assessment.assessmentSubmissions)
+    @ManyToOne(() => Assessment, assessment => assessment.assessmentSubmissions)
     assessment: Assessment
 
-    @ManyToOne(type => User, user => user.assessmentSubmissions)
-    user: User
+    @ManyToOne(() => User, student => student.assessmentSubmissions)
+    student: User
 }
