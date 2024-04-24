@@ -2,6 +2,15 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { config } from 'dotenv'
 
+import { User } from './entities/user.entity'
+import { Lecture } from './entities/lecture.entity'
+import { Enrollment } from './entities/enrollment.entity'
+import { Course } from './entities/course.entity'
+import { CourseMaterial } from './entities/course_material.entity'
+import { Attendance } from './entities/attendance.entity'
+import { Assessment } from './entities/assessment.entity'
+import { AssessmentSubmission } from './entities/assessment_submission.entity'
+
 import { AppService } from './app.service'
 
 import { AppController } from './app.controller'
@@ -35,17 +44,17 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
       username: DB_USER,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [__dirname + '/entities/*.entity.ts'],
-      // entities: [
-      //   User,
-      //   Lecture,
-      //   Enrollment,
-      //   Course,
-      //   CourseMaterial,
-      //   Attendance,
-      //   Assessment,
-      //   AssessmentSubmission,
-      // ],
+      // entities: [__dirname + '/entities/*.entity.ts'],
+      entities: [
+        User,
+        Lecture,
+        Enrollment,
+        Course,
+        CourseMaterial,
+        Attendance,
+        Assessment,
+        AssessmentSubmission,
+      ],
       // autoLoadEntities: true,
       synchronize: true,
     }),
@@ -80,4 +89,3 @@ export class AppModule implements NestModule {
       )
   }
 }
-

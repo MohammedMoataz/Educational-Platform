@@ -1,6 +1,7 @@
 import {
     Column,
     Entity,
+    JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn
 } from "typeorm"
@@ -27,9 +28,11 @@ export class AssessmentSubmission {
     @Column({ nullable: false })
     _created_at: Date
 
-    @ManyToOne(() => Assessment, assessment => assessment.assessmentSubmissions)
+    @ManyToOne(() => Assessment, assessment => assessment.assessmentSubmissions, { cascade: true, onUpdate: "CASCADE", onDelete: "CASCADE" })
+    @JoinColumn({ name: "assessment_id" })
     assessment: Assessment
 
-    @ManyToOne(() => User, student => student.assessmentSubmissions)
+    @ManyToOne(() => User, student => student.assessmentSubmissions, { cascade: true, onUpdate: "CASCADE", onDelete: "CASCADE" })
+    @JoinColumn({ name: "student_id" })
     student: User
 }

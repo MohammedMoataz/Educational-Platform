@@ -28,10 +28,10 @@ export class Lecture {
     @Column({ nullable: true })
     _deleted_at: Date
 
-    @ManyToOne(() => Course, course => course.lectures)
+    @ManyToOne(() => Course, course => course.lectures, { cascade: true, onUpdate: "CASCADE", onDelete: "CASCADE" })
     @JoinColumn({ name: "course_id" })
     course: Course
-    
+
     @OneToMany(() => Assessment, assessment => assessment.lecture)
     assessments: Assessment[]
 

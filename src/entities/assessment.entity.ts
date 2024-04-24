@@ -26,15 +26,15 @@ export class Assessment {
     lecture_id: number
     @Column({ nullable: false })
     _created_at: Date
-    @Column({nullable: true})
+    @Column({ nullable: true })
     _updated_at: Date
-    @Column({nullable: true})
+    @Column({ nullable: true })
     _deleted_at: Date
 
     @OneToMany(() => AssessmentSubmission, submission => submission.assessment)
     assessmentSubmissions: AssessmentSubmission[]
-    
-    @ManyToOne(() => Lecture, lecture => lecture.assessments)
+
+    @ManyToOne(() => Lecture, lecture => lecture.assessments, { cascade: true, onUpdate: "CASCADE", onDelete: "CASCADE" })
     @JoinColumn({ name: "lecture_id" })
     lecture: Lecture
 }

@@ -22,12 +22,12 @@ export class CourseMaterial {
     course_id: number
     @Column({ nullable: false })
     _created_at: Date
-    @Column({nullable: true})
+    @Column({ nullable: true })
     _updated_at: Date
-    @Column({nullable: true})
+    @Column({ nullable: true })
     _deleted_at: Date
 
-    @ManyToOne(() => Course, course => course.course_materials)
+    @ManyToOne(() => Course, course => course.course_materials, { cascade: true, onUpdate: "CASCADE", onDelete: "CASCADE" })
     @JoinColumn({ name: "course_id" })
     course: Course
 }
