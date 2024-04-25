@@ -21,17 +21,19 @@ import { CreateUserDto, UpdateUserDto } from 'src/DTO/user.dto'
 import { UserService, } from 'src/services/user/user.service'
 
 @Controller('/user')
+@ApiTags('User APIs')
+// @ApiBearerAuth('JWT-auth')
 export class UserController {
     constructor(private userService: UserService) { }
 
-    @ApiTags('User APIs')
+
     @Get('all')
+    // @ApiOperation({ summary: 'summary goes here', description: 'description goes here' })
     // @UseInterceptors(UserInterceptor)
     getUsers() {
         return this.userService.findAll()
     }
 
-    @ApiTags('User APIs')
     @Get()
     @UsePipes(ValidationPipe)
     @UseInterceptors(ClassSerializerInterceptor)
@@ -42,21 +44,18 @@ export class UserController {
         else throw new HttpException('User not found', HttpStatus.NOT_FOUND)
     }
 
-    @ApiTags('User APIs')
     @Post()
     @UsePipes(ValidationPipe)
     createUser(@Body() newUser: CreateUserDto) {
         return this.userService.create(newUser)
     }
 
-    @ApiTags('User APIs')
     @Put()
     @UsePipes(ValidationPipe)
     updateUser(@Query('id', ParseIntPipe) id: number, @Body() updatedUser: UpdateUserDto) {
         return this.userService.update(id, updatedUser)
     }
 
-    @ApiTags('User APIs')
     @Delete()
     @UsePipes(ValidationPipe)
     removeUser(@Query('id', ParseIntPipe) id: number) {

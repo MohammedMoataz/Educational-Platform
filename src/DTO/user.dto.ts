@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsEmail, IsNotEmpty } from "class-validator"
+import { IsBoolean, IsEmail, IsNotEmpty, MinLength } from "class-validator"
 import { Exclude } from "class-transformer"
 
 import { EnrollmentDto } from "./enrollment.dto"
@@ -24,6 +24,7 @@ export class UserDto {
     @ApiProperty({ enum: ["student", "teacher", "administrator"] })
     role: "student" | "teacher" | "administrator" | string
     @ApiProperty()
+    @IsBoolean()
     disabled: boolean
     @ApiProperty()
     courses: CourseDto[]
@@ -51,13 +52,15 @@ export class CreateUserDto {
     @ApiProperty()
     @IsNotEmpty()
     email: string
-    @ApiProperty({ minLength: 8 })
+    @ApiProperty()
     @IsNotEmpty()
+    @MinLength(8, { message: 'Password is too short' })
     password: string
     @ApiProperty({ enum: ["student", "teacher", "administrator"] })
     @IsNotEmpty()
     role: "student" | "teacher" | "administrator"
     @ApiProperty()
+    @IsBoolean()
     disabled: boolean
 }
 
@@ -68,8 +71,10 @@ export class UpdateUserDto {
     last_name: string
     @ApiProperty()
     email: string
-    @ApiProperty({ minLength: 8 })
+    @ApiProperty()
+    @MinLength(8, { message: 'Password is too short' })
     password: string
     @ApiProperty()
+    @IsBoolean()
     disabled: boolean
 }

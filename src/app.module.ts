@@ -56,7 +56,6 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
         AssessmentSubmission,
       ],
       // autoLoadEntities: true,
-      synchronize: true,
     }),
     UserModule,
     LectureModule,

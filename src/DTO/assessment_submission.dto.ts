@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsNotEmpty } from "class-validator"
+import { IsInt, IsNotEmpty, Max, Min } from "class-validator"
 import { Exclude } from "class-transformer"
 
 import { UserDto } from "./user.dto"
@@ -21,6 +21,9 @@ export class AssessmentSubmissionDto {
     @ApiProperty()
     submission_date: Date
     @ApiProperty()
+    @IsInt()
+    @Min(0)
+    @Max(100)
     score: number
     @ApiProperty()
     grade: string
