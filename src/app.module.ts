@@ -15,6 +15,7 @@ import { AppService } from './app.service'
 
 import { AppController } from './app.controller'
 
+import { AuthModule } from './auth/auth.module'
 import { UserModule } from './modules/user/user.module'
 import { LectureModule } from './modules/lecture/lecture.module'
 import { EnrollmentModule } from './modules/enrollment/enrollment.module'
@@ -57,6 +58,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
       ],
       // autoLoadEntities: true,
     }),
+    AuthModule,
     UserModule,
     LectureModule,
     EnrollmentModule,

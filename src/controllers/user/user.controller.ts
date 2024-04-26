@@ -26,7 +26,6 @@ import { UserService, } from 'src/services/user/user.service'
 export class UserController {
     constructor(private userService: UserService) { }
 
-
     @Get('all')
     // @ApiOperation({ summary: 'summary goes here', description: 'description goes here' })
     // @UseInterceptors(UserInterceptor)

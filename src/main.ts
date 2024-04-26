@@ -18,7 +18,7 @@ async function bootstrap() {
     .setTitle('Educational Platform APIs')
     .setDescription('APIs for educational platform')
     .setVersion('1.0')
-    .addTag('Authentication APIs')
+    .addTag('Auth APIs')
     .addTag('User APIs')
     .addTag('Course APIs')
     .addTag('Lecture APIs')
