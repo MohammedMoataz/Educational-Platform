@@ -14,7 +14,7 @@ import {
     UsePipes,
     ValidationPipe
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
 import { CreateUserDto, UpdateUserDto } from 'src/DTO/user.dto'
 // import { UserInterceptor } from 'src/interceptors/user.interceptor'
@@ -29,14 +29,14 @@ export class UserController {
     @Get('all')
     // @ApiOperation({ summary: 'summary goes here', description: 'description goes here' })
     // @UseInterceptors(UserInterceptor)
-    getUsers() {
+    async getUsers() {
         return this.userService.findAll()
     }
 
     @Get()
     @UsePipes(ValidationPipe)
     @UseInterceptors(ClassSerializerInterceptor)
-    getUser(@Query('id', ParseIntPipe) id: number) {
+    async getUser(@Query('id', ParseIntPipe) id: number) {
         const user = this.userService.findOneById(id)
 
         if (user) return user
@@ -45,19 +45,23 @@ export class UserController {
 
     @Post()
     @UsePipes(ValidationPipe)
-    createUser(@Body() newUser: CreateUserDto) {
+    async createUser(@Body() newUser: CreateUserDto) {
         return this.userService.create(newUser)
     }
 
     @Put()
     @UsePipes(ValidationPipe)
-    updateUser(@Query('id', ParseIntPipe) id: number, @Body() updatedUser: UpdateUserDto) {
+    async updateUser(@Query('id', ParseIntPipe) id: number, @Body() updatedUser: UpdateUserDto) {
         return this.userService.update(id, updatedUser)
+            .then(() => "User updated successfully")
+            .catch(err => err.message)
     }
 
     @Delete()
     @UsePipes(ValidationPipe)
-    removeUser(@Query('id', ParseIntPipe) id: number) {
+    async removeUser(@Query('id', ParseIntPipe) id: number) {
         return this.userService.remove(id)
+            .then(() => "User deleted successfully")
+            .catch(err => err.message)
     }
 }

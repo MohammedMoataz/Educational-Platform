@@ -37,16 +37,6 @@ export class UserService {
         else throw new NotFoundException(`User with id: ${id} not found`)
     }
 
-    async findOneByEmail(email: string): Promise<UserDto> {
-        const user = await this.userRepository.findOne({
-            where: { email },
-            relations: ['courses', 'enrollments', 'attendances', 'assessmentSubmissions']
-        })
-
-        if (user._deleted_at === null) return plainToClass(UserDto, user)
-        else throw new NotFoundException(`User with email: ${email} not found`)
-    }
-
     async create(newUser: CreateUserDto): Promise<User> {
         return await this.userRepository.save(newUser)
     }
@@ -67,5 +57,12 @@ export class UserService {
             throw new NotFoundException(`User with id: ${id} not found`)
 
         return await this.userRepository.update({ id }, { _deleted_at: new Date() })
+    }
+
+    async signIn(email: string): Promise<User> {
+        const user = await this.userRepository.findOne({ where: { email } })
+
+        if (user._deleted_at === null) return user
+        else throw new NotFoundException(`User with email: ${email} not found`)
     }
 }

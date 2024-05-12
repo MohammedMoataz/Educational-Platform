@@ -48,7 +48,10 @@ export class AttendanceController {
     @ApiTags("Lecture APIs", "User APIs")
     @Delete('attendances')
     @UsePipes(ValidationPipe)
-    removeAttendances(@Query('deletedEnrollment', ParseIntPipe) deletedAttendance: DeleteAttendanceDto) {
-        return this.AttendanceService.remove(deletedAttendance)
+    removeAttendances(
+        @Query('student_id', ParseIntPipe) student_id: number,
+        @Query('lecture_id', ParseIntPipe) lecture_id: number
+    ) {
+        return this.AttendanceService.remove(student_id, lecture_id)
     }
 }

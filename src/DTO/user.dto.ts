@@ -72,7 +72,6 @@ export class UpdateUserDto {
     @ApiProperty()
     email: string
     @ApiProperty()
-    @MinLength(8, { message: 'Password is too short' })
     password: string
     @ApiProperty()
     @IsBoolean()

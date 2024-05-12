@@ -58,9 +58,9 @@ export class AttendanceService {
         return plainToClass(AttendanceDto, attendance)
     }
 
-    async remove(deletedAttendance: DeleteAttendanceDto): Promise<any> {
-        const user = await this.userRepository.findOneBy({ id: deletedAttendance.student_id })
-        const lecture = await this.lectureRepository.findOneBy({ id: deletedAttendance.lecture_id })
+    async remove(student_id: number, lecture_id: number): Promise<any> {
+        const user = await this.userRepository.findOneBy({ id: student_id })
+        const lecture = await this.lectureRepository.findOneBy({ id: lecture_id })
         const attendance = await this.attendanceRepository.findOne({
             where: {
                 student_id: user.id,

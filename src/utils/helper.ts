@@ -1,5 +1,13 @@
-import { hash, genSalt, compare } from "bcrypt"
-import { sign, verify, JwtPayload } from "jsonwebtoken"
+import {
+    hash,
+    genSalt,
+    compare
+} from "bcrypt"
+import {
+    sign,
+    verify,
+    JwtPayload
+} from "jsonwebtoken"
 import { config } from 'dotenv'
 
 config()
@@ -31,7 +39,7 @@ export const hashData = async (
     // Generate the hashed payload using the generated salt.
     return new Promise<string>((resolve, reject) => {
         hash(payload, salt, (err, encrypted) => {
-            err ? reject(err) : resolve(salt)
+            err ? reject(err) : resolve(encrypted)
         })
     })
         .then((encrypted) => {

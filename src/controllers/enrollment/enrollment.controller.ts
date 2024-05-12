@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { CreateEnrollmentDto, DeletedEnrollmentDto } from 'src/DTO/enrollment.dto'
+import { CreateEnrollmentDto } from 'src/DTO/enrollment.dto'
 import { EnrollmentService } from 'src/services/enrollment/enrollment.service'
 
 @Controller()
@@ -48,7 +48,10 @@ export class EnrollmentController {
 
     @ApiTags("Course APIs", "User APIs")
     @Delete('enrollment')
-    removeEnrollment(@Query('deletedEnrollment', ParseIntPipe) deletedEnrollment: DeletedEnrollmentDto) {
-        return this.EnrollmentService.remove(deletedEnrollment)
+    removeEnrollment(
+        @Query('user_id', ParseIntPipe) user_id: number,
+        @Query('course_id', ParseIntPipe) course_id: number
+    ) {
+        return this.EnrollmentService.remove(user_id, course_id)
     }
 }

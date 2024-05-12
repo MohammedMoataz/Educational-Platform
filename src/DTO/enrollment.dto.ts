@@ -31,12 +31,3 @@ export class CreateEnrollmentDto {
     @IsNotEmpty()
     course_id: number
 }
-
-export class DeletedEnrollmentDto {
-    @ApiProperty()
-    @IsNotEmpty()
-    student_id: number
-    @ApiProperty()
-    @IsNotEmpty()
-    course_id: number
-}

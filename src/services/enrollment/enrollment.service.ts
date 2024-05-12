@@ -6,7 +6,7 @@ import { Repository } from 'typeorm'
 import { Enrollment } from 'src/entities/enrollment.entity'
 import { Course } from 'src/entities/course.entity'
 import { User } from 'src/entities/user.entity'
-import { CreateEnrollmentDto, DeletedEnrollmentDto, EnrollmentDto } from 'src/DTO/enrollment.dto'
+import { CreateEnrollmentDto, EnrollmentDto } from 'src/DTO/enrollment.dto'
 
 @Injectable()
 export class EnrollmentService {
@@ -20,30 +20,51 @@ export class EnrollmentService {
     ) { }
 
     async findAllbyUser(student_id: number): Promise<EnrollmentDto[]> {
-        return await this.enrollmentRepository.find({
-            where: { student_id },
-            relations: ['course', 'student']
-        })
-            .then(enrollments => enrollments.filter(enrollment => enrollment._deleted_at === null))
-            .then(enrollments => enrollments.map(enrollment => plainToClass(EnrollmentDto, enrollment)))
+        const user = await this.userRepository.findOneBy({ id: student_id })
+
+        if (!user._deleted_at)
+            return await this.enrollmentRepository.find({
+                where: { student_id },
+                relations: ['course', 'student']
+            })
+                .then(enrollments => enrollments.filter(enrollment => enrollment._deleted_at === null))
+                .then(enrollments => enrollments.map(enrollment => plainToClass(EnrollmentDto, enrollment)))
+
+        else
+            throw new NotFoundException(`User not found`)
     }
 
     async findAllbyCourse(course_id: number): Promise<EnrollmentDto[]> {
-        return await this.enrollmentRepository.find({
-            where: { course_id },
-            relations: ['course', 'student']
-        })
-            .then(enrollments => enrollments.filter(enrollment => enrollment._deleted_at === null))
-            .then(enrollments => enrollments.map(enrollment => plainToClass(EnrollmentDto, enrollment)))
+        const course = await this.courseRepository.findOneBy({ id: course_id })
+
+        if (!course._deleted_at)
+            return await this.enrollmentRepository.find({
+                where: { course_id },
+                relations: ['course', 'student']
+            })
+                .then(enrollments => enrollments.filter(enrollment => enrollment._deleted_at === null))
+                .then(enrollments => enrollments.map(enrollment => plainToClass(EnrollmentDto, enrollment)))
+        else
+            throw new NotFoundException(`Course not found`)
     }
 
     async findOne(student_id: number, course_id: number): Promise<EnrollmentDto> {
-        const enrollment = await this.enrollmentRepository.findOne({
-            where: { student_id, course_id },
-            relations: ['course', 'student']
-        })
+        const user = await this.userRepository.findOneBy({ id: student_id })
+        const course = await this.courseRepository.findOneBy({ id: course_id })
 
-        return plainToClass(EnrollmentDto, enrollment)
+        if (user && course && user._deleted_at === null && course._deleted_at === null)
+            return await this.enrollmentRepository.findOne({
+                where: { student_id, course_id },
+                relations: ['course', 'student']
+            })
+                .then(enrollment => {
+                    if (enrollment && enrollment._deleted_at === null)
+                        return plainToClass(EnrollmentDto, enrollment)
+                    else
+                        throw new NotFoundException(`Enrollment not found`)
+                })
+        else
+            throw new NotFoundException(`User or course not found`)
     }
 
     async create(newEnrollment: CreateEnrollmentDto): Promise<EnrollmentDto> {
@@ -57,20 +78,25 @@ export class EnrollmentService {
         return plainToClass(EnrollmentDto, enrollment)
     }
 
-    async remove(deletedEnrollment: DeletedEnrollmentDto): Promise<any> {
-        const user = await this.userRepository.findOneBy({ id: deletedEnrollment.student_id })
-        const course = await this.courseRepository.findOneBy({ id: deletedEnrollment.course_id })
-        const enrollment = await this.enrollmentRepository.findOne({
-            where: {
-                student_id: user.id,
-                course_id: course.id
-            }
-        })
+    async remove(student_id: number, course_id: number): Promise<any> {
+        const user = await this.userRepository.findOneBy({ id: student_id })
+        const course = await this.courseRepository.findOneBy({ id: course_id })
 
-
-        if (!user || !course || user._deleted_at !== null || course._deleted_at !== null)
+        if (user && course && user._deleted_at === null && course._deleted_at === null)
+            return await this.enrollmentRepository.findOne({
+                where: {
+                    student_id: user.id,
+                    course_id: course.id
+                }
+            })
+                .then(async enrollment => {
+                    if (enrollment && enrollment._deleted_at === null)
+                        return this.enrollmentRepository.update({ id: enrollment.id }, { _deleted_at: new Date() })
+                            .then(() => "Enrollment deleted successfully")
+                    else
+                        throw new NotFoundException(`Enrollment not found`)
+                })
+        else
             throw new NotFoundException(`User or course not found`)
-
-        return await this.enrollmentRepository.update({ id: enrollment.id }, { _deleted_at: new Date() })
     }
 }
