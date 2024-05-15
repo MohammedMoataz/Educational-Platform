@@ -47,9 +47,9 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
       // type: 'mysql' as DatabaseType,
       url: DB_URL,
       host: DB_HOST,
+      database: DB_NAME,
       username: DB_USER,
       password: DB_PASSWORD,
-      database: DB_NAME,
       // entities: [__dirname + '/entities/*.entity.ts'],
       entities: [
         User,
