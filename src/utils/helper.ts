@@ -1,8 +1,4 @@
-import {
-    hash,
-    genSalt,
-    compare
-} from "bcrypt"
+import bcrypt from "bcrypt"
 import {
     sign,
     verify,
@@ -31,14 +27,14 @@ export const hashData = async (
     // Generate a salt with the specified number of rounds.
     const saltRounds = parseInt(SALT_ROUNDS)
     const salt = await new Promise<string>((resolve, reject) => {
-        genSalt(saltRounds, (err, salt) => {
+        bcrypt.genSalt(saltRounds, (err, salt) => {
             err ? reject(err) : resolve(salt)
         })
     })
 
     // Generate the hashed payload using the generated salt.
     return new Promise<string>((resolve, reject) => {
-        hash(payload, salt, (err, encrypted) => {
+        bcrypt.hash(payload, salt, (err, encrypted) => {
             err ? reject(err) : resolve(encrypted)
         })
     })
@@ -58,18 +54,14 @@ export const hashData = async (
  * hashed. The data can be a string or a Buffer.
  * @param hash The hash to be compared against. This should be the hash that was generated when the
  * data was originally hashed.
- * @param callback The callback to be called when the data is compared against the hash. The
- * callback will be passed two arguments: an error (which will be null if there were no errors), and
- * a boolean indicating whether or not the hash is relevant to the data.
  * 
  * @returns Nothing. The result of the comparison will be returned via a callback.
  */
 export const compareHashedData = (
     data: string,
-    hash: string,
-    callback: (err: Error | null, result: boolean) => void
-): void =>
-    compare(data, hash, (err, result) => callback(err, result))
+    hash: string
+): Promise<boolean> =>
+    bcrypt.compare(data, hash)
 
 /**
  * Synchronously sign the given payload into a JSON Web Token string

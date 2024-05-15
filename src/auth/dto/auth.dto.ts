@@ -23,10 +23,19 @@ export class SignUpDto {
     @ApiProperty()
     email: string
     @Exclude()
-    password_hash: string
+    password: string
     @ApiProperty({ enum: ["student", "teacher", "administrator"] })
     role: "student" | "teacher" | "administrator" | string
     @ApiProperty()
     @IsBoolean()
     disabled: boolean
+}
+
+export class RTDto {
+    @ApiProperty()
+    @IsNotEmpty()
+    id: number
+    @ApiProperty()
+    @IsNotEmpty()
+    refresh_token: string
 }

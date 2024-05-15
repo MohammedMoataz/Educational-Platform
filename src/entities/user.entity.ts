@@ -26,6 +26,8 @@ export class User {
     role: string
     @Column()
     disabled: boolean
+    @Column()
+    refresh_token: string
     @Column({ nullable: false })
     _created_at: Date
     @Column({ nullable: true })

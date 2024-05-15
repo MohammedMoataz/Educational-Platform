@@ -5,12 +5,15 @@ import { plainToClass } from 'class-transformer'
 
 import { Course } from 'src/entities/course.entity'
 import { CourseDto, CreateCourseDto, UpdateCourseDto } from 'src/DTO/course.dto'
+import { User } from 'src/entities/user.entity'
 
 @Injectable()
 export class CourseService {
     constructor(
         @InjectRepository(Course)
-        private readonly courseRepository: Repository<Course>
+        private readonly courseRepository: Repository<Course>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>
     ) { }
 
     async findAll(): Promise<CourseDto[]> {
@@ -51,7 +54,12 @@ export class CourseService {
     }
 
     async create(newCourse: CreateCourseDto): Promise<Course> {
-        return await this.courseRepository.save(newCourse)
+        let user = await this.userRepository.findOneBy({ id: newCourse.teacher_id })
+
+        if (user && user._deleted_at === null)
+            return await this.courseRepository.save(newCourse)
+        else
+            throw new NotFoundException(`User with id: ${newCourse.teacher_id} not found`)
     }
 
     async update(id: number, updatedCourse: UpdateCourseDto): Promise<any> {

@@ -12,12 +12,13 @@ import {
     UsePipes,
     ValidationPipe
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateAssessmentDto, UpdateAssessmentDto } from 'src/DTO/assessment.dto'
 import { AssessmentService } from 'src/services/assessment/assessment.service'
 
 @ApiTags("Assessment APIs")
+@ApiBearerAuth('JWT')
 @Controller()
 export class AssessmentController {
     constructor(private AssessmentService: AssessmentService) { }
@@ -31,7 +32,7 @@ export class AssessmentController {
 
     @Get('assessment')
     @UseInterceptors(ClassSerializerInterceptor)
-    getAssessment(id: number) {
+    getAssessment(@Query('id', ParseIntPipe) id: number) {
         return this.AssessmentService.findOneById(id)
     }
 

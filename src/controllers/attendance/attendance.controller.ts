@@ -9,10 +9,11 @@ import {
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
-import { CreateAttendanceDto, DeleteAttendanceDto } from 'src/DTO/attendance.dto'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import { CreateAttendanceDto } from 'src/DTO/attendance.dto'
 import { AttendanceService } from 'src/services/attendance/attendance.service'
 
+@ApiBearerAuth('JWT')
 @Controller()
 export class AttendanceController {
     constructor(private AttendanceService: AttendanceService) { }

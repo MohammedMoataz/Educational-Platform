@@ -10,12 +10,13 @@ import {
     UsePipes,
     ValidationPipe
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateCourseMaterialDto, UpdateCourseMaterialDto } from 'src/DTO/course_material.dto'
 import { CourseMaterialService } from 'src/services/course_material/course_material.service'
 
 @ApiTags("Course APIs")
+@ApiBearerAuth('JWT')
 @Controller('course')
 export class CourseMaterialController {
     constructor(private CourseMaterialService: CourseMaterialService) { }
@@ -26,7 +27,7 @@ export class CourseMaterialController {
     }
 
     @Get('material')
-    getCourseMaterial(id: number) {
+    getCourseMaterial(@Query('material_id', ParseIntPipe) id: number) {
         return this.CourseMaterialService.findOneById(id)
     }
 

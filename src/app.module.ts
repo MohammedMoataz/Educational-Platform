@@ -20,7 +20,7 @@ import { AppService } from './app.service'
 
 import { AppController } from './app.controller'
 
-import { AuthModule } from './auth/auth.module'
+import { AuthModule } from './auth/modules/auth.module'
 import { UserModule } from './modules/user/user.module'
 import { LectureModule } from './modules/lecture/lecture.module'
 import { EnrollmentModule } from './modules/enrollment/enrollment.module'

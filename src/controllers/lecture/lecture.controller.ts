@@ -10,12 +10,13 @@ import {
     UsePipes,
     ValidationPipe
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateLectureDto, UpdateLectureDto } from 'src/DTO/lecture.dto'
 import { LectureService } from 'src/services/lecture/lecture.service'
 
 @ApiTags('Lecture APIs')
+@ApiBearerAuth('JWT')
 @Controller()
 export class LectureController {
     constructor(private lectureService: LectureService) { }
@@ -27,7 +28,7 @@ export class LectureController {
 
     
     @Get('lecture')
-    getLecture(id: number) {
+    getLecture(@Query('id', ParseIntPipe) id: number) {
         return this.lectureService.findOneById(id)
     }
 
@@ -51,9 +52,8 @@ export class LectureController {
     removeLecture(@Query('id', ParseIntPipe) id: number) {
         return this.lectureService.remove(id)
     }
-
     
-    @Delete('course/lectures')
+    @Get('course/lectures')
     getCourseLectures(@Query('course_id', ParseIntPipe) course_id: number) {
         return this.lectureService.getCourseLectures(course_id)
     }

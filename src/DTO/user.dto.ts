@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsBoolean, IsEmail, IsNotEmpty, MinLength } from "class-validator"
+import { IsBoolean, IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator"
 import { Exclude } from "class-transformer"
 
 import { EnrollmentDto } from "./enrollment.dto"
@@ -26,6 +26,8 @@ export class UserDto {
     @ApiProperty()
     @IsBoolean()
     disabled: boolean
+    @ApiProperty()
+    refresh_token: string
     @ApiProperty()
     courses: CourseDto[]
     @ApiProperty()

@@ -14,7 +14,7 @@ import {
     UsePipes,
     ValidationPipe
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 
 import { CreateUserDto, UpdateUserDto } from 'src/DTO/user.dto'
 // import { UserInterceptor } from 'src/interceptors/user.interceptor'
@@ -22,7 +22,7 @@ import { UserService, } from 'src/services/user/user.service'
 
 @Controller('/user')
 @ApiTags('User APIs')
-// @ApiBearerAuth('JWT-auth')
+@ApiBearerAuth('JWT')
 export class UserController {
     constructor(private userService: UserService) { }
 

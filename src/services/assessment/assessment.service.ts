@@ -19,7 +19,7 @@ export class AssessmentService {
     async findAllByLecture(lecture_id: number): Promise<AssessmentDto[]> {
         return await this.assessmentRepository.find({
             where: { lecture_id },
-            relations: ['student', 'lecture']
+            relations: ['assessmentSubmissions', 'lecture']
         })
             .then(assessments => assessments.filter(assessment => assessment._deleted_at === null))
             .then(assessments => assessments.map(assessment => plainToClass(AssessmentDto, assessment)))
@@ -28,7 +28,7 @@ export class AssessmentService {
     async findOneById(id: number): Promise<AssessmentDto> {
         const assessment = await this.assessmentRepository.findOne({
             where: { id },
-            relations: ['student', 'lecture']
+            relations: ['assessmentSubmissions', 'lecture']
         })
 
         return plainToClass(AssessmentDto, assessment)

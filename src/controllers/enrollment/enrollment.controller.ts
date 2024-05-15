@@ -9,11 +9,12 @@ import {
     UsePipes,
     ValidationPipe
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateEnrollmentDto } from 'src/DTO/enrollment.dto'
 import { EnrollmentService } from 'src/services/enrollment/enrollment.service'
 
+@ApiBearerAuth('JWT')
 @Controller()
 export class EnrollmentController {
     constructor(private EnrollmentService: EnrollmentService) { }

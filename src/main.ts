@@ -1,15 +1,18 @@
 import { NestFactory } from '@nestjs/core'
+import { ValidationPipe } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { config } from 'dotenv'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
-// import { ValidationPipe } from '@nestjs/common'
+import { ATGuard } from './auth/common/guards'
 
 config()
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalGuards(new ATGuard())
   app.enableCors()
   app.use(helmet())
 

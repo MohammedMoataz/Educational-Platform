@@ -50,6 +50,15 @@ export class UserService {
         return await this.userRepository.update({ id }, updatedUser)
     }
 
+    async updateRefreshToken(id: number, refresh_token: string): Promise<any> {
+        const user = await this.userRepository.findOneBy({ id })
+
+        if (!user || user._deleted_at !== null)
+            throw new NotFoundException(`User with id: ${id} not found`)
+
+        return await this.userRepository.update({ id }, { refresh_token })
+    }
+
     async remove(id: number): Promise<any> {
         const user = await this.userRepository.findOneBy({ id })
 

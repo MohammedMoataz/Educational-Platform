@@ -61,7 +61,7 @@ export class LectureService {
     async getCourseLectures(course_id: number): Promise<LectureDto[]> {
         return await this.lectureRepository.find({
             where: { course_id },
-            relations: ['lectures']
+            relations: ['course']
         })
             .then(lectures => lectures.filter(lecture => lecture._deleted_at === null))
             .then(lectures => lectures.map(lecture => plainToClass(LectureDto, lecture)))

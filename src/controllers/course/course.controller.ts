@@ -8,12 +8,13 @@ import {
     Put,
     Query,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateCourseDto, UpdateCourseDto } from 'src/DTO/course.dto'
 import { CourseService } from 'src/services/course/course.service'
 
 @ApiTags("Course APIs")
+@ApiBearerAuth('JWT')
 @Controller()
 export class CourseController {
     constructor(private CourseService: CourseService) { }
@@ -33,7 +34,7 @@ export class CourseController {
 
     // @UseInterceptors(ClassSerializerInterceptor)
     @Get('course')
-    getCourse(id: number) {
+    getCourse(@Query('id', ParseIntPipe) id: number) {
         return this.CourseService.findOneById(id)
     }
 

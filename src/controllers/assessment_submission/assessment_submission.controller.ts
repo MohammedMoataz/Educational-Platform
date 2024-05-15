@@ -10,12 +10,13 @@ import {
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateAssessmentSubmissionDto } from 'src/DTO/assessment_submission.dto'
 import { AssessmentSubmissionService } from 'src/services/assessment_submission/assessment_submission.service'
 
 @Controller()
+@ApiBearerAuth('JWT')
 export class AssessmentSubmissionController {
     constructor(private AssessmentSubmissionService: AssessmentSubmissionService) { }
 
