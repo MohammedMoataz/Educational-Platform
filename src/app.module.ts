@@ -34,7 +34,7 @@ import { CreateLogger, UpdateLogger } from './middlewares/date-logger.middleware
 
 config()
 
-const DB_PORT = process.env.DB_PORT as string
+const DB_URL = process.env.DB_URL as string
 const DB_HOST = process.env.DB_HOST as string
 const DB_NAME = process.env.DB_NAME as string
 const DB_USER = process.env.DB_USER as string
@@ -45,8 +45,8 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
     TypeOrmModule.forRoot({
       type: 'mysql',
       // type: 'mysql' as DatabaseType,
+      url: DB_URL,
       host: DB_HOST,
-      port: parseInt(DB_PORT),
       username: DB_USER,
       password: DB_PASSWORD,
       database: DB_NAME,
