@@ -62,6 +62,8 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
         AssessmentSubmission,
       ],
       // autoLoadEntities: true,
+      connectorPackage: 'mysql',
+      connectTimeout: 60 * 60 * 1000,
     }),
     AuthModule,
     UserModule,
