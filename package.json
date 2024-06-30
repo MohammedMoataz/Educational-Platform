@@ -1,8 +1,8 @@
 {
-  "name": "server",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "educational_platform",
+  "version": "2.1.5",
+  "description": "a comprehensive online platform designed to enhance teaching and learning experiences. The platform aims to provide a user-friendly and interactive environment for students, teachers, and administrators to effectively engage in the educational process.",
+  "author": "Mohammed Moataz",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

@@ -7,7 +7,10 @@ import {
     Req,
     UseGuards,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import {
+    ApiBearerAuth,
+    ApiTags
+} from '@nestjs/swagger'
 import { Request } from 'express'
 
 import { AuthService } from './../services/auth.service'

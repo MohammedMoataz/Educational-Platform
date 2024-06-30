@@ -10,15 +10,23 @@ import {
     Post,
     Put,
     Query,
+    UseGuards,
     UseInterceptors,
     UsePipes,
     ValidationPipe
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-
-import { CreateUserDto, UpdateUserDto } from 'src/DTO/user.dto'
-// import { UserInterceptor } from 'src/interceptors/user.interceptor'
-import { UserService, } from 'src/services/user/user.service'
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiTags
+} from '@nestjs/swagger'
+import JWTAuthGuard from 'src/auth/common/guards/jwt.guard'
+import {
+    CreateUserDto,
+    UpdateUserDto
+} from 'src/DTO/user.dto'
+import { UserInterceptor } from 'src/interceptors/user.interceptor'
+import { UserService } from 'src/services/user/user.service'
 
 @Controller('/user')
 @ApiTags('User APIs')
@@ -28,7 +36,7 @@ export class UserController {
 
     @Get('all')
     // @ApiOperation({ summary: 'summary goes here', description: 'description goes here' })
-    // @UseInterceptors(UserInterceptor)
+    @UseInterceptors(UserInterceptor)
     async getUsers() {
         return this.userService.findAll()
     }
@@ -36,6 +44,7 @@ export class UserController {
     @Get()
     @UsePipes(ValidationPipe)
     @UseInterceptors(ClassSerializerInterceptor)
+    @UseGuards(JWTAuthGuard)
     async getUser(@Query('id', ParseIntPipe) id: number) {
         const user = this.userService.findOneById(id)
 

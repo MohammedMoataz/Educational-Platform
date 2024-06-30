@@ -4,6 +4,7 @@ import {
   NestModule,
   RequestMethod
 } from '@nestjs/common'
+import { PassportModule } from '@nestjs/passport'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { config } from 'dotenv'
 
@@ -17,7 +18,6 @@ import { Assessment } from './entities/assessment.entity'
 import { AssessmentSubmission } from './entities/assessment_submission.entity'
 
 import { AppService } from './app.service'
-
 import { AppController } from './app.controller'
 
 import { AuthModule } from './auth/modules/auth.module'
@@ -30,7 +30,10 @@ import { AssessmentModule } from './modules/assessment/assessment.module'
 import { AssessmentSubmissionModule } from './modules/assessment_submission/assessment_submission.module'
 import { AttendanceModule } from './modules/attendance/attendance.module'
 
-import { CreateLogger, UpdateLogger } from './middlewares/date-logger.middleware'
+import {
+  CreateLogger,
+  UpdateLogger
+} from './middlewares/date-logger.middleware'
 
 config()
 
@@ -42,6 +45,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt-auth' }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       // type: 'mysql' as DatabaseType,
