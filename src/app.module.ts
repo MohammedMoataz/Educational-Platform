@@ -45,11 +45,11 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt-auth' }),
+    // PassportModule.register({ defaultStrategy: 'jwt-auth' }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       // type: 'mysql' as DatabaseType,
-      url: DB_URL,
+      // url: DB_URL,
       host: DB_HOST,
       database: DB_NAME,
       username: DB_USER,

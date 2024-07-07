@@ -5,6 +5,7 @@ import {
     HttpStatus,
     Post,
     Req,
+    UnauthorizedException,
     UseGuards,
 } from '@nestjs/common'
 import {
@@ -17,9 +18,10 @@ import { AuthService } from './../services/auth.service'
 import { LoginDto, SignUpDto } from './../dto/auth.dto'
 import { Tokens } from 'src/utils/types'
 import { RTGuard } from '../common/guards'
+import { LocalGuard } from '../common/guards/local.guard'
 
-@ApiTags("Auth APIs")
 @Controller()
+@ApiTags("Auth APIs")
 export class AuthController {
     constructor(private authService: AuthService) { }
 
@@ -29,14 +31,19 @@ export class AuthController {
         return this.authService.signUp(signUpDto)
     }
 
-    @HttpCode(HttpStatus.OK)
+
     @Post('signin')
-    async signIn(@Body() signInDto: LoginDto): Promise<Tokens> {
-        return this.authService.signIn(signInDto.email, signInDto.password)
+    @UseGuards(LocalGuard)
+    async signIn(@Body() loginDto: LoginDto): Promise<Tokens> {
+        let tokens = this.authService.signIn(loginDto)
+
+        if (!tokens) throw new UnauthorizedException('Wrong email or password')
+
+        return tokens
     }
 
-    @ApiBearerAuth('JWT')
-    @UseGuards(RTGuard)
+    // @ApiBearerAuth('JWT')
+    // @UseGuards(RTGuard)
     @HttpCode(HttpStatus.OK)
     @Post('refreshtoken')
     async refreshToken(@Req() req: Request) {
@@ -44,7 +51,7 @@ export class AuthController {
         return this.authService.refreshToken(user['sub'], user['refresh_token'])
     }
 
-    @ApiBearerAuth('JWT')
+    // @ApiBearerAuth('JWT')
     @HttpCode(HttpStatus.OK)
     @Post('logout')
     async logout(@Req() req: Request): Promise<string> {

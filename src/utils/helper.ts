@@ -57,11 +57,11 @@ export const hashData = async (
  * 
  * @returns Nothing. The result of the comparison will be returned via a callback.
  */
-export const compareHashedData = (
+export const compareHashedData = async (
     data: string,
-    hash: string
+    encrypted: string
 ): Promise<boolean> =>
-    bcrypt.compare(data, hash)
+    await bcrypt.compare(data, encrypted)
 
 /**
  * Synchronously sign the given payload into a JSON Web Token string

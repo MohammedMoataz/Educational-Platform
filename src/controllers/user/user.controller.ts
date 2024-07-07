@@ -30,7 +30,7 @@ import { UserService } from 'src/services/user/user.service'
 
 @Controller('/user')
 @ApiTags('User APIs')
-@ApiBearerAuth('JWT')
+// @ApiBearerAuth('JWT')
 export class UserController {
     constructor(private userService: UserService) { }
 
@@ -42,9 +42,9 @@ export class UserController {
     }
 
     @Get()
-    @UsePipes(ValidationPipe)
-    @UseInterceptors(ClassSerializerInterceptor)
-    @UseGuards(JWTAuthGuard)
+    // @UsePipes(ValidationPipe)
+    @UseInterceptors(UserInterceptor)
+    // @UseGuards(JWTAuthGuard)
     async getUser(@Query('id', ParseIntPipe) id: number) {
         const user = this.userService.findOneById(id)
 

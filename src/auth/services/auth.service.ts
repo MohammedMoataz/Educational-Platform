@@ -5,7 +5,7 @@ import {
     ExtractJwt,
     Strategy
 } from 'passport-jwt'
-import { plainToClass } from 'class-transformer'
+import { plainToClass, plainToClassFromExist } from 'class-transformer'
 import { config } from 'dotenv'
 
 import { CreateUserDto, UserDto } from 'src/DTO/user.dto'
@@ -17,6 +17,7 @@ import {
 import { Tokens } from 'src/utils/types'
 import { User } from 'src/entities/user.entity'
 import {
+    LoginDto,
     RTDto,
     SignUpDto
 } from './../dto/auth.dto'
@@ -39,17 +40,19 @@ export class AuthService {
         }
     }
 
-    async signIn(email: string, pass: string,): Promise<Tokens> {
-        const user = await this.userService.signIn(email)
-        if (!user) throw new UnauthorizedException("User is not authorized")
-        if (user.disabled) throw new UnauthorizedException("User is disabled")
+    async signIn(loginDto: LoginDto): Promise<Tokens> {
+        const user = await this.userService.signIn(loginDto.email)
 
-        const isPasswordMatchs = await compareHashedData(pass, user.password_hash)
-        if (!isPasswordMatchs) throw new UnauthorizedException("User is not authorized")
+        if (!user) return null
+        if (user.disabled) return null
+
+        // const isPasswordMatchs = await compareHashedData(loginDto.password, user.password_hash)
+        // if (!isPasswordMatchs) return null
 
         const tokens = await this.getTokens(user)
-        await this.userService.updateRefreshToken(user.id, tokens.refresh_token)
+        // await this.userService.updateRefreshToken(user.id, tokens.refresh_token)
 
+        console.log({ tokens })
         return tokens
     }
 
@@ -157,7 +160,7 @@ export class AuthService {
 //     const userId = 1;
 //     const findOneSpy = jest.spyOn(userService, 'findOne').mockResolvedValue(null);
 
-//     await expect(service.login({ username: 'test', userId })).rejects.toThrowError(`User with id ${userId} not found`);
+//     await expect(service.login({ username: 'test', userId })).rejects.toThrowError(`User with id ${ userId } not found`);
 //     expect(findOneSpy).toHaveBeenCalledWith(userId);
 //   });
 // });
