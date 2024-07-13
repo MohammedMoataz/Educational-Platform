@@ -8,14 +8,18 @@ import {
 
 import { Assessment } from "./assessment.entity"
 import { User } from "./user.entity"
+import { Exclude } from "class-transformer"
 
 @Entity({ name: "assessment_submission" })
 export class AssessmentSubmission {
     @PrimaryGeneratedColumn()
+    @Exclude()
     id: number
     @Column()
+    @Exclude()
     student_id: number
     @Column()
+    @Exclude()
     assessment_id: number
     @Column()
     submission_date: Date

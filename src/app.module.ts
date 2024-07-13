@@ -48,7 +48,6 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
     // PassportModule.register({ defaultStrategy: 'jwt-auth' }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      // type: 'mysql' as DatabaseType,
       // url: DB_URL,
       host: DB_HOST,
       database: DB_NAME,

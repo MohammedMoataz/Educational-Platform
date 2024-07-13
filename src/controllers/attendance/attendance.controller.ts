@@ -40,14 +40,14 @@ export class AttendanceController {
     }
 
     @ApiTags("Lecture APIs", "User APIs")
-    @Post('attendances')
+    @Post('attendance')
     @UsePipes(ValidationPipe)
     createAttendances(@Body() newAttendances: CreateAttendanceDto) {
         return this.AttendanceService.create(newAttendances)
     }
 
     @ApiTags("Lecture APIs", "User APIs")
-    @Delete('attendances')
+    @Delete('attendance')
     @UsePipes(ValidationPipe)
     removeAttendances(
         @Query('student_id', ParseIntPipe) student_id: number,

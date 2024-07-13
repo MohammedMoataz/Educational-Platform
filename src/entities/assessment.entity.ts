@@ -6,6 +6,7 @@ import {
     OneToMany,
     PrimaryGeneratedColumn
 } from "typeorm"
+import { Exclude } from "class-transformer"
 
 import { AssessmentSubmission } from "./assessment_submission.entity"
 import { Lecture } from "./lecture.entity"
@@ -13,6 +14,7 @@ import { Lecture } from "./lecture.entity"
 @Entity({ name: "assessment" })
 export class Assessment {
     @PrimaryGeneratedColumn()
+    @Exclude()
     id: number
     @Column()
     title: string
@@ -23,6 +25,7 @@ export class Assessment {
     @Column()
     solution: string
     @Column()
+    @Exclude()
     lecture_id: number
     @Column({ nullable: false })
     _created_at: Date

@@ -7,12 +7,14 @@ import {
     Post,
     Put,
     Query,
+    UseInterceptors,
     UsePipes,
     ValidationPipe
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateLectureDto, UpdateLectureDto } from 'src/DTO/lecture.dto'
+import { CreateLectureInterceptor } from 'src/interceptors/lecture.interceptor'
 import { LectureService } from 'src/services/lecture/lecture.service'
 
 @ApiTags('Lecture APIs')
@@ -35,6 +37,7 @@ export class LectureController {
     
     @Post('lecture')
     @UsePipes(ValidationPipe)
+    @UseInterceptors(CreateLectureInterceptor)
     createLecture(@Body() newLecture: CreateLectureDto) {
         return this.lectureService.create(newLecture)
     }

@@ -5,6 +5,7 @@ import { NextFunction } from "express"
 export class AuthenticationMiddleware implements NestMiddleware {
     async use(req: Request, res: Response, next: NextFunction) {
         // Authenticate the request
-        
+
+        next()
     }
 }

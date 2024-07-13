@@ -7,14 +7,16 @@ import {
     Post,
     Put,
     Query,
+    UseInterceptors,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateCourseDto, UpdateCourseDto } from 'src/DTO/course.dto'
+import { CreateCourseInterceptor } from 'src/interceptors/course.interceptor'
 import { CourseService } from 'src/services/course/course.service'
 
 @ApiTags("Course APIs")
-@ApiBearerAuth('JWT')
+// @ApiBearerAuth('JWT')
 @Controller()
 export class CourseController {
     constructor(private CourseService: CourseService) { }
@@ -28,28 +30,29 @@ export class CourseController {
     @ApiTags("User APIs")
     // @UseInterceptors(ClassSerializerInterceptor)
     @Get('user/courses')
-    getTeacherCoursess(@Query('teacher_id', ParseIntPipe) teacher_id: number) {
+    getTeacherCoursess(@Query('teacher_id') teacher_id: string) {
         return this.CourseService.findAllByTeacher(teacher_id)
     }
 
     // @UseInterceptors(ClassSerializerInterceptor)
     @Get('course')
-    getCourse(@Query('id', ParseIntPipe) id: number) {
+    getCourse(@Query('id') id: string) {
         return this.CourseService.findOneById(id)
     }
 
     @Post('course')
+    @UseInterceptors(CreateCourseInterceptor)
     createCourse(@Body() newCourses: CreateCourseDto) {
         return this.CourseService.create(newCourses)
     }
 
     @Put('course')
-    updatecourse(@Query('id', ParseIntPipe) id: number, @Body() updatedCourses: UpdateCourseDto) {
+    updatecourse(@Query('id') id: string, @Body() updatedCourses: UpdateCourseDto) {
         return this.CourseService.update(id, updatedCourses)
     }
 
     @Delete('course')
-    removeCourse(@Query('id', ParseIntPipe) id: number) {
+    removeCourse(@Query('id') id: string) {
         return this.CourseService.remove(id)
     }
 }

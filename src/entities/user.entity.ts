@@ -4,6 +4,7 @@ import {
     OneToMany,
     PrimaryGeneratedColumn
 } from "typeorm"
+import { Exclude } from "class-transformer"
 
 import { AssessmentSubmission } from "./assessment_submission.entity"
 import { Enrollment } from "./enrollment.entity"
@@ -13,7 +14,10 @@ import { Course } from "./course.entity"
 @Entity({ name: "user" })
 export class User {
     @PrimaryGeneratedColumn()
+    @Exclude()
     id: number
+    @Column()
+    uuid: string
     @Column()
     first_name: string
     @Column()
@@ -21,6 +25,7 @@ export class User {
     @Column({ unique: true })
     email: string
     @Column()
+    @Exclude()
     password_hash: string
     @Column({ enum: ['student', 'teacher', 'administrator'] })
     role: string

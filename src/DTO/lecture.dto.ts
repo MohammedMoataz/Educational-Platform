@@ -12,6 +12,8 @@ export class LectureDto {
     @Exclude()
     id: number
     @ApiProperty()
+    uuid: string
+    @ApiProperty()
     title: string
     @ApiProperty()
     content: string

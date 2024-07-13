@@ -64,7 +64,7 @@ export class AuthService {
         return await this.getTokens(user)
     }
 
-    async refreshToken(id: number, refresh_token: string): Promise<any> {
+    async refreshToken(id: string, refresh_token: string): Promise<any> {
         const user = await this.userService.findOneById(id)
         if (!user) throw new UnauthorizedException("User is not authorized")
 
@@ -72,12 +72,12 @@ export class AuthService {
         if (!isRefreshTokenMatches) throw new UnauthorizedException("User is not authorized")
 
         const tokens = await this.getTokens(user)
-        await this.userService.updateRefreshToken(user.id, tokens.refresh_token)
+        await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
 
         return tokens
     }
 
-    async logout(id: number): Promise<string> {
+    async logout(id: string): Promise<string> {
         await this.userService.updateRefreshToken(id, null)
         return "Logged out successfully"
     }
@@ -96,7 +96,7 @@ export class AuthService {
     }
 
     async updateRefreshToken(rtDto: RTDto) {
-        await this.userService.updateRefreshToken(rtDto.id, rtDto.refresh_token)
+        await this.userService.updateRefreshToken(rtDto.uuid, rtDto.refresh_token)
     }
 
     login(user: { username: any; userId: any }) {

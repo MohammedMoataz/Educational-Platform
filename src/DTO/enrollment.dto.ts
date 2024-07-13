@@ -26,8 +26,12 @@ export class EnrollmentDto {
 export class CreateEnrollmentDto {
     @ApiProperty()
     @IsNotEmpty()
-    student_id: number
+    student_uuid: string
     @ApiProperty()
     @IsNotEmpty()
+    course_uuid: string
+    @Exclude()
+    student_id: number
+    @Exclude()
     course_id: number
 }

@@ -7,10 +7,12 @@ import {
 } from "typeorm"
 
 import { Course } from "./course.entity"
+import { Exclude } from "class-transformer"
 
 @Entity({ name: "course_material" })
 export class CourseMaterial {
     @PrimaryGeneratedColumn()
+    @Exclude()
     id: number
     @Column()
     title: string
@@ -19,6 +21,7 @@ export class CourseMaterial {
     @Column()
     file_url: string
     @Column()
+    @Exclude()
     course_id: number
     @Column({ nullable: false })
     _created_at: Date

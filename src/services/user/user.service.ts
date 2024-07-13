@@ -1,11 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+    Injectable,
+    NotFoundException
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import {
+    IsNull,
+    Repository
+} from 'typeorm'
 import { plainToClass } from 'class-transformer'
 
 import { User } from 'src/entities/user.entity'
-
-import { CreateUserDto, UpdateUserDto, UserDto } from 'src/DTO/user.dto'
+import {
+    CreateUserDto,
+    UpdateUserDto,
+    UserDto
+} from 'src/DTO/user.dto'
+import { hashData } from "src/utils/helper"
 
 @Injectable()
 export class UserService {
@@ -16,9 +26,8 @@ export class UserService {
 
     async findAll(): Promise<UserDto[]> {
         const users = await this.userRepository.find({
-            relations: ['courses', 'enrollments', 'attendances', 'assessmentSubmissions']
+            where: { _deleted_at: IsNull() },
         })
-            .then(users => users.filter(user => user._deleted_at === null))
             .then(users => users.map(user => plainToClass(UserDto, user)))
 
         if (!users)
@@ -27,51 +36,65 @@ export class UserService {
         return users
     }
 
-    async findOneById(id: number): Promise<UserDto> {
+    async findOneById(id: string): Promise<UserDto> {
         const user = await this.userRepository.findOne({
-            where: { id },
-            relations: ['courses', 'enrollments', 'attendances', 'assessmentSubmissions']
+            where: { uuid: id },
         })
 
-        if (user._deleted_at === null) return plainToClass(UserDto, user)
+        if (user && user._deleted_at === null) return plainToClass(UserDto, user)
         else throw new NotFoundException(`User with id: ${id} not found`)
     }
 
     async create(newUser: CreateUserDto): Promise<User> {
+        newUser["password_hash"] = await hashData(newUser["password"])
         return await this.userRepository.save(newUser)
     }
 
-    async update(id: number, updatedUser: UpdateUserDto): Promise<any> {
-        const user = await this.userRepository.findOneBy({ id })
+    async update(id: string, updatedUser: UpdateUserDto): Promise<any> {
+        const user = await this.userRepository.findOneBy({
+            uuid: id,
+            _deleted_at: IsNull()
+        })
 
-        if (!user || user._deleted_at !== null)
+        if (!user)
             throw new NotFoundException(`User with id: ${id} not found`)
 
-        return await this.userRepository.update({ id }, updatedUser)
+        return await this.userRepository.update({ uuid: id }, updatedUser)
     }
 
-    async updateRefreshToken(id: number, refresh_token: string): Promise<any> {
-        const user = await this.userRepository.findOneBy({ id })
+    async updateRefreshToken(id: string, refresh_token: string): Promise<any> {
+        const user = await this.userRepository.findOneBy({
+            uuid: id,
+            _deleted_at: IsNull()
+        })
 
-        if (!user || user._deleted_at !== null)
+        if (!user)
             throw new NotFoundException(`User with id: ${id} not found`)
 
-        return await this.userRepository.update({ id }, { refresh_token })
+        return await this.userRepository.update({ uuid: id }, { refresh_token })
     }
 
-    async remove(id: number): Promise<any> {
-        const user = await this.userRepository.findOneBy({ id })
+    async remove(id: string): Promise<any> {
+        const user = await this.userRepository.findOneBy({
+            uuid: id,
+            _deleted_at: IsNull()
+        })
 
-        if (!user || user._deleted_at !== null)
+        if (!user)
             throw new NotFoundException(`User with id: ${id} not found`)
 
-        return await this.userRepository.update({ id }, { _deleted_at: new Date() })
+        return await this.userRepository.update({ uuid: id }, { _deleted_at: new Date() })
     }
 
     async signIn(email: string): Promise<User> {
-        const user = await this.userRepository.findOne({ where: { email } })
+        const user = await this.userRepository.findOne({
+            where: {
+                email,
+                _deleted_at: IsNull()
+            }
+        })
 
-        if (user._deleted_at === null) return user
-        else throw new NotFoundException(`User with email: ${email} not found`)
+        if (!user) throw new NotFoundException(`User with email: ${email} not found`)
+        else return user
     }
 }

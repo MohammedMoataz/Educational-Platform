@@ -33,7 +33,7 @@ export class AuthController {
 
 
     @Post('signin')
-    @UseGuards(LocalGuard)
+    // @UseGuards(LocalGuard)
     async signIn(@Body() loginDto: LoginDto): Promise<Tokens> {
         let tokens = this.authService.signIn(loginDto)
 

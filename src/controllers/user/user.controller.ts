@@ -25,7 +25,7 @@ import {
     CreateUserDto,
     UpdateUserDto
 } from 'src/DTO/user.dto'
-import { UserInterceptor } from 'src/interceptors/user.interceptor'
+import { CreateUserInterceptor } from 'src/interceptors/user.interceptor'
 import { UserService } from 'src/services/user/user.service'
 
 @Controller('/user')
@@ -36,16 +36,14 @@ export class UserController {
 
     @Get('all')
     // @ApiOperation({ summary: 'summary goes here', description: 'description goes here' })
-    @UseInterceptors(UserInterceptor)
     async getUsers() {
         return this.userService.findAll()
     }
 
     @Get()
-    // @UsePipes(ValidationPipe)
-    @UseInterceptors(UserInterceptor)
+    @UsePipes(ValidationPipe)
     // @UseGuards(JWTAuthGuard)
-    async getUser(@Query('id', ParseIntPipe) id: number) {
+    async getUser(@Query('id') id: string) {
         const user = this.userService.findOneById(id)
 
         if (user) return user
@@ -54,13 +52,14 @@ export class UserController {
 
     @Post()
     @UsePipes(ValidationPipe)
+    @UseInterceptors(CreateUserInterceptor)
     async createUser(@Body() newUser: CreateUserDto) {
         return this.userService.create(newUser)
     }
 
     @Put()
     @UsePipes(ValidationPipe)
-    async updateUser(@Query('id', ParseIntPipe) id: number, @Body() updatedUser: UpdateUserDto) {
+    async updateUser(@Query('id') id: string, @Body() updatedUser: UpdateUserDto) {
         return this.userService.update(id, updatedUser)
             .then(() => "User updated successfully")
             .catch(err => err.message)
@@ -68,7 +67,7 @@ export class UserController {
 
     @Delete()
     @UsePipes(ValidationPipe)
-    async removeUser(@Query('id', ParseIntPipe) id: number) {
+    async removeUser(@Query('id') id: string) {
         return this.userService.remove(id)
             .then(() => "User deleted successfully")
             .catch(err => err.message)

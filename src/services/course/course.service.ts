@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { IsNull, Repository } from 'typeorm'
 import { plainToClass } from 'class-transformer'
 
 import { Course } from 'src/entities/course.entity'
@@ -29,12 +29,14 @@ export class CourseService {
         return courses
     }
 
-    async findAllByTeacher(teacher_id): Promise<CourseDto[]> {
+    async findAllByTeacher(teacher_id: string): Promise<CourseDto[]> {
+        let user = await this.userRepository.findOneBy({ uuid: teacher_id })
         const courses = await this.courseRepository.find({
-            where: { teacher_id },
-            relations: ['teacher', 'course_materials', 'lectures', 'enrollments']
+            where: {
+                teacher_id: user.id,
+                _deleted_at: IsNull()
+            },
         })
-            .then(courses => courses.filter(course => course._deleted_at === null))
             .then(courses => courses.map(course => plainToClass(CourseDto, course)))
 
         if (!courses)
@@ -43,9 +45,9 @@ export class CourseService {
         return courses
     }
 
-    async findOneById(id: number): Promise<CourseDto> {
+    async findOneById(id: string): Promise<CourseDto> {
         const course = await this.courseRepository.findOne({
-            where: { id },
+            where: { uuid: id },
             relations: ['teacher', 'course_materials', 'lectures', 'enrollments']
         })
 
@@ -54,24 +56,25 @@ export class CourseService {
     }
 
     async create(newCourse: CreateCourseDto): Promise<Course> {
-        let user = await this.userRepository.findOneBy({ id: newCourse.teacher_id })
+        let user = await this.userRepository.findOneBy({ uuid: newCourse.teacher_uuid })
+        newCourse["teacher_id"] = user.id
 
         if (user && user._deleted_at === null)
             return await this.courseRepository.save(newCourse)
         else
-            throw new NotFoundException(`User with id: ${newCourse.teacher_id} not found`)
+            throw new NotFoundException(`User with id: ${newCourse.teacher_uuid} not found`)
     }
 
-    async update(id: number, updatedCourse: UpdateCourseDto): Promise<any> {
-        return await this.courseRepository.update({ id }, updatedCourse)
+    async update(id: string, updatedCourse: UpdateCourseDto): Promise<any> {
+        return await this.courseRepository.update({ uuid: id }, updatedCourse)
     }
 
-    async remove(id: number): Promise<any> {
-        const course = await this.courseRepository.findOneBy({ id })
+    async remove(id: string): Promise<any> {
+        const course = await this.courseRepository.findOneBy({ uuid: id })
 
         if (!course || course._deleted_at !== null)
             throw new NotFoundException(`Course with id: ${id} not found`)
 
-        return await this.courseRepository.update({ id }, { _deleted_at: new Date() })
+        return await this.courseRepository.update({ uuid: id }, { _deleted_at: new Date() })
     }
 }

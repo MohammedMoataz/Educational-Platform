@@ -34,7 +34,7 @@ export class SignUpDto {
 export class RTDto {
     @ApiProperty()
     @IsNotEmpty()
-    id: number
+    uuid: string
     @ApiProperty()
     @IsNotEmpty()
     refresh_token: string

@@ -13,6 +13,8 @@ export class CourseDto {
     @Exclude()
     id: string
     @ApiProperty()
+    uuid: string
+    @ApiProperty()
     name: string
     @ApiProperty()
     description: string
@@ -41,7 +43,7 @@ export class CreateCourseDto {
     description: string
     @ApiProperty()
     @IsNotEmpty()
-    teacher_id: number
+    teacher_uuid: string
 }
 
 export class UpdateCourseDto {
@@ -50,5 +52,5 @@ export class UpdateCourseDto {
     @ApiProperty()
     description: string
     @ApiProperty()
-    teacher_id: number
+    teacher_uuid: string
 }

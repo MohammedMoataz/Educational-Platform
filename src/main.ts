@@ -50,11 +50,8 @@ async function bootstrap() {
 
   const PORT = process.env.PORT as string
 
-  // app.useGlobalPipes(new ValidationPipe({
-  //   whitelist: true,
-  // }))
-
   await app.listen(parseInt(PORT))
+  // .then(() => console.log(`http://localhost:${PORT}/api-docs`))
 }
 
 bootstrap()

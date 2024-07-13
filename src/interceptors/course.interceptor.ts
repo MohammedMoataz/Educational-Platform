@@ -11,14 +11,14 @@ import {
     Observable
 } from "rxjs"
 
-import { UserDto } from "src/DTO/user.dto"
+import { CourseDto } from "src/DTO/course.dto"
 
 @Injectable()
-export class CreateUserInterceptor implements NestInterceptor {
+export class CreateCourseInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> | Promise<Observable<any>> {
         const req = context.switchToHttp().getRequest()
         req.body["uuid"] = uuidv4()
 
-        return next.handle().pipe(map(user => plainToClass(UserDto, user)))
+        return next.handle().pipe(map(course => plainToClass(CourseDto, course)))
     }
 }
