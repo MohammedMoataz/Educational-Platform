@@ -38,12 +38,14 @@ export class AssessmentSubmissionDto {
 }
 
 export class CreateAssessmentSubmissionDto {
-    @ApiProperty()
-    @IsNotEmpty()
+    @Exclude()
     student_id: number
-    @ApiProperty()
-    @IsNotEmpty()
+    @Exclude()
     assessment_id: number
+    @ApiProperty()
+    student_uuid: string
+    @ApiProperty()
+    assessment_uuid: string
     @ApiProperty()
     @IsNotEmpty()
     submission_date: Date

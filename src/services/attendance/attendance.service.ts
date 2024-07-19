@@ -1,12 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { IsNull, Repository } from 'typeorm'
 import { plainToClass } from 'class-transformer'
 
 import { Attendance } from 'src/entities/attendance.entity'
 import { Lecture } from 'src/entities/lecture.entity'
 import { User } from 'src/entities/user.entity'
-import { AttendanceDto, CreateAttendanceDto, DeleteAttendanceDto } from 'src/DTO/attendance.dto'
+import {
+    AttendanceDto,
+    CreateAttendanceDto,
+} from 'src/DTO/attendance.dto'
 
 @Injectable()
 export class AttendanceService {
@@ -14,53 +17,81 @@ export class AttendanceService {
         @InjectRepository(Attendance)
         private readonly attendanceRepository: Repository<Attendance>,
         @InjectRepository(User)
-        private readonly userRepository: Repository<Attendance>,
+        private readonly userRepository: Repository<User>,
         @InjectRepository(Lecture)
-        private readonly lectureRepository: Repository<Attendance>
+        private readonly lectureRepository: Repository<Lecture>
     ) { }
 
-    async findAllByStudent(student_id: number): Promise<AttendanceDto[]> {
+    async findAllByStudent(student_id: string): Promise<AttendanceDto[]> {
+        const user = await this.userRepository.findOneBy({ uuid: student_id })
+
+        if (!user || user._deleted_at !== null)
+            throw new NotFoundException(`User not found`)
+
         return await this.attendanceRepository.find({
-            where: { student_id },
-            relations: ['student', 'lecture']
+            where: {
+                student_id: user.id,
+                _deleted_at: IsNull()
+            },
         })
-            .then(attendances => attendances.filter(attendance => attendance._deleted_at === null))
             .then(attendances => attendances.map(attendance => plainToClass(AttendanceDto, attendance)))
     }
 
-    async findAllByLecture(lecture_id: number): Promise<AttendanceDto[]> {
-        return await this.attendanceRepository.find({
-            where: { lecture_id },
-            relations: ['student', 'lecture']
-        })
-            .then(attendances => attendances.filter(attendance => attendance._deleted_at === null))
-            .then(attendances => attendances.map(attendance => plainToClass(AttendanceDto, attendance)))
+    async findAllByLecture(lecture_id: string): Promise<AttendanceDto[]> {
+        const lecture = await this.lectureRepository.findOneBy({ uuid: lecture_id })
 
+        if (!lecture || lecture._deleted_at !== null)
+            throw new NotFoundException(`Lecture not found`)
+
+        return await this.attendanceRepository.find({
+            where: {
+                lecture_id: lecture.id,
+                _deleted_at: IsNull()
+            },
+        })
+            .then(attendances => attendances.map(attendance => plainToClass(AttendanceDto, attendance)))
     }
 
-    async findOne(student_id: number, lecture_id: number): Promise<AttendanceDto> {
+    async findAttendance(student_id: string, lecture_id: string): Promise<AttendanceDto> {
+        const user = await this.userRepository.findOneBy({ uuid: student_id })
+        const lecture = await this.lectureRepository.findOneBy({ uuid: lecture_id })
+
+        if (!user || !lecture || user._deleted_at !== null || lecture._deleted_at !== null)
+            throw new NotFoundException(`User or lecture not found`)
+
         const attendance = await this.attendanceRepository.findOne({
-            where: { student_id, lecture_id },
-            relations: ['lecture', 'student']
+            where: {
+                student_id: user.id,
+                lecture_id: lecture.id,
+                _deleted_at: IsNull()
+            },
         })
 
         return plainToClass(AttendanceDto, attendance)
     }
 
     async create(newAttendance: CreateAttendanceDto): Promise<AttendanceDto> {
-        const user = await this.userRepository.findOneBy({ id: newAttendance.student_id })
-        const lecture = await this.lectureRepository.findOneBy({ id: newAttendance.lecture_id })
+        const user = await this.userRepository.findOneBy({ uuid: newAttendance.student_uuid })
+        const lecture = await this.lectureRepository.findOneBy({ uuid: newAttendance.lecture_uuid })
 
         if (!user || !lecture || user._deleted_at !== null || lecture._deleted_at !== null)
             throw new NotFoundException(`User or lecture not found`)
+
+
+        newAttendance["student_id"] = user.id
+        newAttendance["lecture_id"] = lecture.id
 
         const attendance = await this.attendanceRepository.save(newAttendance)
         return plainToClass(AttendanceDto, attendance)
     }
 
-    async remove(student_id: number, lecture_id: number): Promise<any> {
-        const user = await this.userRepository.findOneBy({ id: student_id })
-        const lecture = await this.lectureRepository.findOneBy({ id: lecture_id })
+    async remove(student_id: string, lecture_id: string): Promise<any> {
+        const user = await this.userRepository.findOneBy({ uuid: student_id })
+        const lecture = await this.lectureRepository.findOneBy({ uuid: lecture_id })
+
+        if (!user || !lecture || user._deleted_at !== null || lecture._deleted_at !== null)
+            throw new NotFoundException(`User or lecture not found`)
+
         const attendance = await this.attendanceRepository.findOne({
             where: {
                 student_id: user.id,
@@ -68,10 +99,10 @@ export class AttendanceService {
             }
         })
 
+        if (!attendance || attendance._deleted_at !== null)
+            throw new NotFoundException(`Attendance not found`)
 
-        if (!user || !lecture || user._deleted_at !== null || lecture._deleted_at !== null)
-            throw new NotFoundException(`User or lecture not found`)
-
-        return await this.attendanceRepository.update({ id: attendance.id }, { _deleted_at: new Date() })
+        return this.attendanceRepository.update({ id: attendance.id }, { _deleted_at: new Date() })
+            .then(() => "Enrollment deleted successfully")
     }
 }

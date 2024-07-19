@@ -1,4 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+    Injectable,
+    NotFoundException
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { plainToClass } from 'class-transformer'
@@ -6,7 +9,10 @@ import { plainToClass } from 'class-transformer'
 import { AssessmentSubmission } from 'src/entities/assessment_submission.entity'
 import { Assessment } from 'src/entities/assessment.entity'
 import { User } from 'src/entities/user.entity'
-import { AssessmentSubmissionDto, CreateAssessmentSubmissionDto } from 'src/DTO/assessment_submission.dto'
+import {
+    AssessmentSubmissionDto,
+    CreateAssessmentSubmissionDto
+} from 'src/DTO/assessment_submission.dto'
 
 @Injectable()
 export class AssessmentSubmissionService {
@@ -19,34 +25,53 @@ export class AssessmentSubmissionService {
         private readonly userRepository: Repository<User>,
     ) { }
 
-    async findAllByStudent(student_id: number): Promise<AssessmentSubmissionDto[]> {
+    async findAllByStudent(student_id: string): Promise<AssessmentSubmissionDto[]> {
+        const student = await this.userRepository.findOneBy({ uuid: student_id })
+
+        if (!student || student._deleted_at !== null)
+            throw new NotFoundException(`User or assessment not found`)
+
         return await this.assessmentSubmissionRepository.find({
-            where: { student_id },
-            relations: ['student', 'assessment']
+            where: { student_id: student.id },
         })
             .then(assessmentSubmissions => assessmentSubmissions.map(assessmentSubmission => plainToClass(AssessmentSubmissionDto, assessmentSubmission)))
     }
 
-    async findAllByAssessment(assessment_id: number): Promise<AssessmentSubmissionDto[]> {
+    async findAllByAssessment(assessment_id: string): Promise<AssessmentSubmissionDto[]> {
+        const assessment = await this.assessmentRepository.findOneBy({ uuid: assessment_id })
+
+        if (!assessment || assessment._deleted_at !== null)
+            throw new NotFoundException(`User or assessment not found`)
+
         return await this.assessmentSubmissionRepository.find({
-            where: { assessment_id },
-            relations: ['student', 'assessment']
+            where: { assessment_id: assessment.id },
         })
             .then(assessmentSubmissions => assessmentSubmissions.map(assessmentSubmission => plainToClass(AssessmentSubmissionDto, assessmentSubmission)))
     }
 
-    async findOne(student_id: number, assessment_id: number): Promise<AssessmentSubmissionDto> {
+    async findAssessmentSubmission(student_id: string, assessment_id: string): Promise<AssessmentSubmissionDto> {
+        const student = await this.userRepository.findOneBy({ uuid: student_id })
+        const assessment = await this.assessmentRepository.findOneBy({ uuid: assessment_id })
+
+        if (!student || !assessment || student._deleted_at !== null || assessment._deleted_at !== null)
+            throw new NotFoundException(`Student or assessment not found`)
+
         const assessmentSubmission = await this.assessmentSubmissionRepository.findOne({
-            where: { student_id, assessment_id },
-            relations: ['student', 'assessment']
+            where: {
+                student_id: student.id,
+                assessment_id: assessment.id
+            },
         })
 
         return plainToClass(AssessmentSubmissionDto, assessmentSubmission)
     }
 
     async create(newAssessmentSubmission: CreateAssessmentSubmissionDto): Promise<AssessmentSubmissionDto> {
-        const user = await this.userRepository.findOneBy({ id: newAssessmentSubmission.student_id })
-        const assessment = await this.assessmentRepository.findOneBy({ id: newAssessmentSubmission.assessment_id })
+        const user = await this.userRepository.findOneBy({ uuid: newAssessmentSubmission.student_uuid })
+        const assessment = await this.assessmentRepository.findOneBy({ uuid: newAssessmentSubmission.assessment_uuid })
+
+        newAssessmentSubmission["student_id"] = user.id
+        newAssessmentSubmission["assessment_id"] = assessment.id
 
         if (!user || !assessment || user._deleted_at !== null || assessment._deleted_at !== null)
             throw new NotFoundException(`User or assessment not found`)

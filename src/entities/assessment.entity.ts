@@ -17,6 +17,8 @@ export class Assessment {
     @Exclude()
     id: number
     @Column()
+    uuid: string
+    @Column()
     title: string
     @Column()
     description: string

@@ -11,6 +11,8 @@ export class AssessmentDto {
     @Exclude()
     id: number
     @ApiProperty()
+    uuid: string
+    @ApiProperty()
     title: string
     @ApiProperty()
     description: string
@@ -45,6 +47,8 @@ export class CreateAssessmentDto {
     solution: string
     @ApiProperty()
     @IsNotEmpty()
+    lecture_uuid: string
+    @Exclude()
     lecture_id: number
 }
 
@@ -58,5 +62,7 @@ export class UpdateAssessmentDto {
     @ApiProperty()
     solution: string
     @ApiProperty()
+    lecture_uuid: string
+    @Exclude()
     lecture_id: number
 }

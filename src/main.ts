@@ -51,7 +51,6 @@ async function bootstrap() {
   const PORT = process.env.PORT as string
 
   await app.listen(parseInt(PORT))
-  // .then(() => console.log(`http://localhost:${PORT}/api-docs`))
 }
 
 bootstrap()

@@ -3,13 +3,13 @@ import {
     Controller,
     Delete,
     Get,
-    ParseIntPipe,
     Post,
     Query,
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+
 import { CreateAttendanceDto } from 'src/DTO/attendance.dto'
 import { AttendanceService } from 'src/services/attendance/attendance.service'
 
@@ -20,23 +20,23 @@ export class AttendanceController {
 
     @ApiTags("User APIs")
     @Get('student/attendances')
-    getStudentAttendances(@Query('student_id', ParseIntPipe) student_id: number) {
+    getStudentAttendances(@Query('student_id') student_id: string) {
         return this.AttendanceService.findAllByStudent(student_id)
     }
 
     @ApiTags("Lecture APIs")
     @Get('lecture/attendances')
-    getLectureAttendances(@Query('lecture_id', ParseIntPipe) lecture_id: number) {
+    getLectureAttendances(@Query('lecture_id') lecture_id: string) {
         return this.AttendanceService.findAllByLecture(lecture_id)
     }
 
     @ApiTags("Lecture APIs", "User APIs")
     @Get('attendance')
     getAttendances(
-        @Query('student_id', ParseIntPipe) student_id: number,
-        @Query('lecture_id', ParseIntPipe) lecture_id: number
+        @Query('student_id') student_id: string,
+        @Query('lecture_id') lecture_id: string
     ) {
-        return this.AttendanceService.findOne(student_id, lecture_id)
+        return this.AttendanceService.findAttendance(student_id, lecture_id)
     }
 
     @ApiTags("Lecture APIs", "User APIs")
@@ -50,8 +50,8 @@ export class AttendanceController {
     @Delete('attendance')
     @UsePipes(ValidationPipe)
     removeAttendances(
-        @Query('student_id', ParseIntPipe) student_id: number,
-        @Query('lecture_id', ParseIntPipe) lecture_id: number
+        @Query('student_id') student_id: string,
+        @Query('lecture_id') lecture_id: string
     ) {
         return this.AttendanceService.remove(student_id, lecture_id)
     }

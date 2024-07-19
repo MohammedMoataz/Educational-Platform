@@ -27,17 +27,25 @@ export class AttendanceDto {
 export class CreateAttendanceDto {
     @ApiProperty()
     @IsNotEmpty()
+    student_uuid: string
+    @Exclude()
     student_id: number
     @ApiProperty()
     @IsNotEmpty()
+    lecture_uuid: string
+    @Exclude()
     lecture_id: number
 }
 
-export class DeleteAttendanceDto {
-    @ApiProperty()
-    @IsNotEmpty()
-    student_id: number
-    @ApiProperty()
-    @IsNotEmpty()
-    lecture_id: number
-}
+// export class DeleteAttendanceDto {
+//     @ApiProperty()
+//     @IsNotEmpty()
+//     student_uuid: string
+//     @Exclude()
+//     student_id: number
+//     @ApiProperty()
+//     @IsNotEmpty()
+//     lecture_uuid: string
+//     @Exclude()
+//     lecture_id: number
+// }
