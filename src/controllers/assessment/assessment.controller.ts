@@ -20,6 +20,7 @@ import {
     CreateAssessmentDto,
     UpdateAssessmentDto
 } from 'src/DTO/assessment.dto'
+import { CreateAssessmentInterceptor } from 'src/interceptors/assessment.interceptor'
 import { AssessmentService } from 'src/services/assessment/assessment.service'
 
 @ApiTags("Assessment APIs")
@@ -43,6 +44,7 @@ export class AssessmentController {
 
     @Post('assessment')
     @UsePipes(ValidationPipe)
+    @UseInterceptors(CreateAssessmentInterceptor)
     createAssessment(@Body() newAssessment: CreateAssessmentDto) {
         return this.AssessmentService.create(newAssessment)
     }

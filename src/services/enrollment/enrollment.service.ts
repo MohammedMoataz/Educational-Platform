@@ -105,7 +105,7 @@ export class EnrollmentService {
                 .then(async enrollment => {
                     if (enrollment && enrollment._deleted_at === null)
                         return this.enrollmentRepository.update({ id: enrollment.id }, { _deleted_at: new Date() })
-                            .then(() => "Enrollment deleted successfully")
+                            .then(() => "Enrollment was deleted successfully")
                     else
                         throw new NotFoundException(`Enrollment not found`)
                 })

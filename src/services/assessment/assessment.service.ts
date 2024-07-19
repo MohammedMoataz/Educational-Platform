@@ -70,6 +70,7 @@ export class AssessmentService {
         if (!assessment || assessment._deleted_at !== null)
             throw new NotFoundException(`assessment with id: ${id} not found`)
 
-        return await this.assessmentRepository.update({ id: assessment.id }, { _deleted_at: new Date() })
+        return this.assessmentRepository.update({ id: assessment.id }, { _deleted_at: new Date() })
+            .then(() => "Assessment was deleted successfully")
     }
 }

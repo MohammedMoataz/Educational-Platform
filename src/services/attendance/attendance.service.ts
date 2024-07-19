@@ -103,6 +103,6 @@ export class AttendanceService {
             throw new NotFoundException(`Attendance not found`)
 
         return this.attendanceRepository.update({ id: attendance.id }, { _deleted_at: new Date() })
-            .then(() => "Enrollment deleted successfully")
+            .then(() => "Attendance was deleted successfully")
     }
 }
