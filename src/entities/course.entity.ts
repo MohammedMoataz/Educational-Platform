@@ -32,6 +32,7 @@ export class Course {
     @Column({ nullable: true })
     _updated_at: Date
     @Column({ nullable: true })
+    @Exclude()
     _deleted_at: Date
 
     @ManyToOne(() => User, user => user.courses, { cascade: true, onUpdate: "CASCADE", onDelete: "CASCADE" })

@@ -32,6 +32,8 @@ export class CourseDto {
     _created_at: Date
     @ApiProperty()
     _updated_at: Date
+    @Exclude()
+    _deleted_at: Date
 }
 
 export class CreateCourseDto {

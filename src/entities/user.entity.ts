@@ -38,6 +38,7 @@ export class User {
     @Column({ nullable: true })
     _updated_at: Date
     @Column({ nullable: true })
+    @Exclude()
     _deleted_at: Date
 
     @OneToMany(() => Course, course => course.teacher)

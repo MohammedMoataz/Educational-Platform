@@ -23,6 +23,7 @@ export class Enrollment {
     course_id: number
     @Column({ nullable: false })
     _created_at: Date
+    @Exclude()
     @Column({ nullable: true })
     _deleted_at: Date
 

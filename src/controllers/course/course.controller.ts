@@ -1,15 +1,18 @@
 import {
     Body,
+    ClassSerializerInterceptor,
     Controller,
     Delete,
     Get,
-    ParseIntPipe,
     Post,
     Put,
     Query,
     UseInterceptors,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import {
+    ApiBearerAuth,
+    ApiTags
+} from '@nestjs/swagger'
 
 import { CreateCourseDto, UpdateCourseDto } from 'src/DTO/course.dto'
 import { CreateCourseInterceptor } from 'src/interceptors/course.interceptor'
@@ -21,20 +24,20 @@ import { CourseService } from 'src/services/course/course.service'
 export class CourseController {
     constructor(private CourseService: CourseService) { }
 
-    // @UseInterceptors(ClassSerializerInterceptor)
+    @UseInterceptors(ClassSerializerInterceptor)
     @Get('course/all')
     getCoursess() {
         return this.CourseService.findAll()
     }
 
     @ApiTags("User APIs")
-    // @UseInterceptors(ClassSerializerInterceptor)
+    @UseInterceptors(ClassSerializerInterceptor)
     @Get('user/courses')
     getTeacherCoursess(@Query('teacher_id') teacher_id: string) {
         return this.CourseService.findAllByTeacher(teacher_id)
     }
 
-    // @UseInterceptors(ClassSerializerInterceptor)
+    @UseInterceptors(ClassSerializerInterceptor)
     @Get('course')
     getCourse(@Query('id') id: string) {
         return this.CourseService.findOneById(id)

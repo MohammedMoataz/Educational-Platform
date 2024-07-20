@@ -13,7 +13,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { CreateAttendanceDto } from 'src/DTO/attendance.dto'
 import { AttendanceService } from 'src/services/attendance/attendance.service'
 
-@ApiBearerAuth('JWT')
+// @ApiBearerAuth('JWT')
 @Controller()
 export class AttendanceController {
     constructor(private AttendanceService: AttendanceService) { }

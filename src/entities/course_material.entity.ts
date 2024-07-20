@@ -15,6 +15,8 @@ export class CourseMaterial {
     @Exclude()
     id: number
     @Column()
+    uuid: string
+    @Column()
     title: string
     @Column()
     description: string
@@ -28,6 +30,7 @@ export class CourseMaterial {
     @Column({ nullable: true })
     _updated_at: Date
     @Column({ nullable: true })
+    @Exclude()
     _deleted_at: Date
 
     @ManyToOne(() => Course, course => course.course_materials, { cascade: true, onUpdate: "CASCADE", onDelete: "CASCADE" })

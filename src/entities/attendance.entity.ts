@@ -24,6 +24,7 @@ export class Attendance {
     @Column({ nullable: false })
     _created_at: Date
     @Column({ nullable: true })
+    @Exclude()
     _deleted_at: Date
 
     @ManyToOne(() => User, user => user.attendances, { cascade: true, onUpdate: "CASCADE", onDelete: "CASCADE" })

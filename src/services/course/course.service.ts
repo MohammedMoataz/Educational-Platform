@@ -17,10 +17,9 @@ export class CourseService {
     ) { }
 
     async findAll(): Promise<CourseDto[]> {
-        const courses = await this.courseRepository.find({
-            relations: ['teacher', 'course_materials', 'lectures', 'enrollments']
+        const courses = await this.courseRepository.findBy({
+            _deleted_at: IsNull()
         })
-            .then(courses => courses.filter(course => course._deleted_at === null))
             .then(courses => courses.map(course => plainToClass(CourseDto, course)))
 
         if (!courses)
@@ -47,11 +46,13 @@ export class CourseService {
 
     async findOneById(id: string): Promise<CourseDto> {
         const course = await this.courseRepository.findOne({
-            where: { uuid: id },
-            relations: ['teacher', 'course_materials', 'lectures', 'enrollments']
+            where: {
+                uuid: id,
+                _deleted_at: IsNull()
+            },
         })
 
-        if (course._deleted_at === null) return plainToClass(CourseDto, course)
+        if (course) return plainToClass(CourseDto, course)
         else throw new NotFoundException(`Course with id: ${id} not found`)
     }
 
@@ -66,6 +67,14 @@ export class CourseService {
     }
 
     async update(id: string, updatedCourse: UpdateCourseDto): Promise<any> {
+        const course = await this.courseRepository.findOneBy({
+            uuid: id,
+            _deleted_at: IsNull()
+        })
+
+        if (!course)
+            throw new NotFoundException(`Course with id: ${id} not found`)
+
         return await this.courseRepository.update({ uuid: id }, updatedCourse)
     }
 
@@ -75,6 +84,7 @@ export class CourseService {
         if (!course || course._deleted_at !== null)
             throw new NotFoundException(`Course with id: ${id} not found`)
 
-        return await this.courseRepository.update({ uuid: id }, { _deleted_at: new Date() })
+        return this.courseRepository.update({ uuid: id }, { _deleted_at: new Date() })
+            .then(() => "Course was deleted successfully")
     }
 }

@@ -10,6 +10,8 @@ export class CourseMaterialDto {
     @Exclude()
     id: number
     @ApiProperty()
+    uuid: string
+    @ApiProperty()
     title: string
     @ApiProperty()
     description: string
@@ -39,7 +41,7 @@ export class CreateCourseMaterialDto {
     file_url: string
     @ApiProperty()
     @IsNotEmpty()
-    course_id: number
+    course_uuid: string
 }
 
 export class UpdateCourseMaterialDto {
@@ -50,5 +52,5 @@ export class UpdateCourseMaterialDto {
     @ApiProperty()
     file_url: string
     @ApiProperty()
-    course_id: number
+    course_uuid: string
 }

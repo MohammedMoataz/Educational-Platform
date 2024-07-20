@@ -26,14 +26,15 @@ export class Assessment {
     type: string
     @Column()
     solution: string
-    @Column()
     @Exclude()
+    @Column()
     lecture_id: number
     @Column({ nullable: false })
     _created_at: Date
     @Column({ nullable: true })
     _updated_at: Date
     @Column({ nullable: true })
+    @Exclude()
     _deleted_at: Date
 
     @OneToMany(() => AssessmentSubmission, submission => submission.assessment)

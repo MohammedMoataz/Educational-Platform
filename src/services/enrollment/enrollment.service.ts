@@ -4,7 +4,10 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { plainToClass } from 'class-transformer'
-import { IsNull, Repository } from 'typeorm'
+import {
+    IsNull,
+    Repository
+} from 'typeorm'
 
 import { Enrollment } from 'src/entities/enrollment.entity'
 import { Course } from 'src/entities/course.entity'
@@ -34,7 +37,6 @@ export class EnrollmentService {
                     student_id: user.id,
                     _deleted_at: IsNull()
                 },
-                relations: ['course', 'student']
             })
                 .then(enrollments => enrollments.map(enrollment => plainToClass(EnrollmentDto, enrollment)))
 
@@ -51,7 +53,6 @@ export class EnrollmentService {
                     course_id: course.id,
                     _deleted_at: IsNull()
                 },
-                relations: ['course', 'student']
             })
                 .then(enrollments => enrollments.map(enrollment => plainToClass(EnrollmentDto, enrollment)))
         else
@@ -64,8 +65,11 @@ export class EnrollmentService {
 
         if (user && course && user._deleted_at === null && course._deleted_at === null)
             return await this.enrollmentRepository.findOne({
-                where: { student_id: user.id, course_id: course.id },
-                relations: ['course', 'student']
+                where: {
+                    student_id: user.id,
+                    course_id: course.id,
+                    _deleted_at: IsNull()
+                },
             })
                 .then(enrollment => {
                     if (enrollment && enrollment._deleted_at === null)
@@ -99,7 +103,8 @@ export class EnrollmentService {
             return await this.enrollmentRepository.findOne({
                 where: {
                     student_id: user.id,
-                    course_id: course.id
+                    course_id: course.id,
+                    _deleted_at: IsNull()
                 }
             })
                 .then(async enrollment => {

@@ -4,7 +4,6 @@ import {
     Controller,
     Delete,
     Get,
-    ParseIntPipe,
     Post,
     Query,
     UseInterceptors,
@@ -17,31 +16,31 @@ import {
 } from '@nestjs/swagger'
 
 import { CreateEnrollmentDto } from 'src/DTO/enrollment.dto'
-import { GetEnrollmentInterceptor } from 'src/interceptors/enrollment.interceptor'
+import { CreateEnrollmentInterceptor } from 'src/interceptors/enrollment.interceptor'
 import { EnrollmentService } from 'src/services/enrollment/enrollment.service'
 
-@ApiBearerAuth('JWT')
+// @ApiBearerAuth('JWT')
 @Controller()
 export class EnrollmentController {
     constructor(private EnrollmentService: EnrollmentService) { }
 
     @ApiTags("User APIs")
     @Get('user/enrollments')
-    @UseInterceptors(GetEnrollmentInterceptor)
+    @UseInterceptors(CreateEnrollmentInterceptor)
     getUserEnrollments(@Query('user_id') id: string) {
         return this.EnrollmentService.findAllbyUser(id)
     }
 
     @ApiTags("Course APIs")
     @Get('course/enrollments')
-    @UseInterceptors(GetEnrollmentInterceptor)
+    @UseInterceptors(CreateEnrollmentInterceptor)
     getCourseEnrollments(@Query('course_id') id: string) {
         return this.EnrollmentService.findAllbyCourse(id)
     }
 
     @ApiTags("Course APIs", "User APIs")
     @Get('enrollment')
-    @UseInterceptors(GetEnrollmentInterceptor)
+    @UseInterceptors(CreateEnrollmentInterceptor)
     getEnrollment(
         @Query('user_id') user_id: string,
         @Query('course_id') course_id: string

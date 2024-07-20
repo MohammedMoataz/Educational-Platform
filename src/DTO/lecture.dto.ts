@@ -42,7 +42,7 @@ export class CreateLectureDto {
     content: string
     @ApiProperty()
     @IsNotEmpty()
-    course_id: number
+    course_uuid: string
 }
 
 export class UpdateLectureDto {
@@ -51,5 +51,5 @@ export class UpdateLectureDto {
     @ApiProperty()
     content: string
     @ApiProperty()
-    course_id: number
+    course_uuid: string
 }
