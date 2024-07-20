@@ -7,6 +7,9 @@ import {
     Req,
     UnauthorizedException,
     UseGuards,
+    UseInterceptors,
+    UsePipes,
+    ValidationPipe,
 } from '@nestjs/common'
 import {
     ApiBearerAuth,
@@ -19,6 +22,7 @@ import { LoginDto, SignUpDto } from './../dto/auth.dto'
 import { Tokens } from 'src/utils/types'
 import { RTGuard } from '../common/guards'
 import { LocalGuard } from '../common/guards/local.guard'
+import { CreateUserInterceptor } from 'src/interceptors/user.interceptor'
 
 @Controller()
 @ApiTags("Auth APIs")
@@ -27,6 +31,8 @@ export class AuthController {
 
     @HttpCode(HttpStatus.CREATED)
     @Post('signup')
+    @UsePipes(ValidationPipe)
+    @UseInterceptors(CreateUserInterceptor)
     async signup(@Body() signUpDto: SignUpDto): Promise<Tokens> {
         return this.authService.signUp(signUpDto)
     }
@@ -38,8 +44,7 @@ export class AuthController {
         let tokens = this.authService.signIn(loginDto)
 
         if (!tokens) throw new UnauthorizedException('Wrong email or password')
-
-        return tokens
+        else return tokens
     }
 
     // @ApiBearerAuth('JWT')
@@ -48,7 +53,7 @@ export class AuthController {
     @Post('refreshtoken')
     async refreshToken(@Req() req: Request) {
         const user = req.user
-        return this.authService.refreshToken(user['sub'], user['refresh_token'])
+        return this.authService.refreshToken(user['id'], user['refresh_token'])
     }
 
     // @ApiBearerAuth('JWT')

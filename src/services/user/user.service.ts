@@ -46,7 +46,9 @@ export class UserService {
     }
 
     async create(newUser: CreateUserDto): Promise<User> {
-        newUser["password_hash"] = await hashData(newUser["password"])
+        console.log({ newUser })
+        newUser["password_hash"] = await hashData(newUser.password)
+
         return await this.userRepository.save(newUser)
     }
 

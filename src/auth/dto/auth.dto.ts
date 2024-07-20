@@ -1,6 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Exclude } from "class-transformer"
-import { IsBoolean, IsNotEmpty } from "class-validator"
+import {
+    IsBoolean,
+    IsNotEmpty
+} from "class-validator"
 
 export class LoginDto {
     @ApiProperty()
@@ -22,7 +25,7 @@ export class SignUpDto {
     last_name: string
     @ApiProperty()
     email: string
-    @Exclude()
+    @ApiProperty()
     password: string
     @ApiProperty({ enum: ["student", "teacher", "administrator"] })
     role: "student" | "teacher" | "administrator" | string

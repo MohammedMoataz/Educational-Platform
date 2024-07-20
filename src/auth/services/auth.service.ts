@@ -1,19 +1,19 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+    Injectable,
+    UnauthorizedException
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { PassportStrategy } from '@nestjs/passport'
 import {
     ExtractJwt,
     Strategy
 } from 'passport-jwt'
-import { plainToClass, plainToClassFromExist } from 'class-transformer'
+import { plainToClass } from 'class-transformer'
 import { config } from 'dotenv'
 
 import { CreateUserDto, UserDto } from 'src/DTO/user.dto'
 import { UserService } from 'src/services/user/user.service'
-import {
-    compareHashedData,
-    hashData
-} from 'src/utils/helper'
+import { compareHashedData } from 'src/utils/helper'
 import { Tokens } from 'src/utils/types'
 import { User } from 'src/entities/user.entity'
 import {
@@ -21,7 +21,6 @@ import {
     RTDto,
     SignUpDto
 } from './../dto/auth.dto'
-
 
 config()
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string
@@ -42,23 +41,19 @@ export class AuthService {
 
     async signIn(loginDto: LoginDto): Promise<Tokens> {
         const user = await this.userService.signIn(loginDto.email)
+        if (!user || user.disabled) return null
 
-        if (!user) return null
-        if (user.disabled) return null
-
-        // const isPasswordMatchs = await compareHashedData(loginDto.password, user.password_hash)
-        // if (!isPasswordMatchs) return null
+        const isPasswordMatchs = await compareHashedData(loginDto.password, user.password_hash)
+        if (!isPasswordMatchs) return null
 
         const tokens = await this.getTokens(user)
-        // await this.userService.updateRefreshToken(user.id, tokens.refresh_token)
 
-        console.log({ tokens })
+        await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
+
         return tokens
     }
 
     async signUp(signupDto: SignUpDto): Promise<Tokens> {
-        signupDto["password_hash"] = await hashData(signupDto.password)
-
         const user = await this.userService.create(plainToClass(CreateUserDto, signupDto))
 
         return await this.getTokens(user)
@@ -68,8 +63,8 @@ export class AuthService {
         const user = await this.userService.findOneById(id)
         if (!user) throw new UnauthorizedException("User is not authorized")
 
-        const isRefreshTokenMatches = await compareHashedData(refresh_token, user.refresh_token)
-        if (!isRefreshTokenMatches) throw new UnauthorizedException("User is not authorized")
+        // const isRefreshTokenMatches = await compareHashedData(refresh_token, user.refresh_token)
+        // if (!isRefreshTokenMatches) throw new UnauthorizedException("User is not authorized")
 
         const tokens = await this.getTokens(user)
         await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
