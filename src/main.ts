@@ -14,10 +14,10 @@ config()
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  // app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe())
   // app.useGlobalGuards(new ATGuard())
-  // app.enableCors()
-  // app.use(helmet())
+  app.enableCors()
+  app.use(helmet())
 
   // Swagger's configuration
   const swaggerConfig = new DocumentBuilder()
@@ -29,11 +29,11 @@ async function bootstrap() {
     .addTag('Course APIs')
     .addTag('Lecture APIs')
     .addTag('Assessment APIs')
-    // .addSecurity('JWT', {
-    //   type: 'http',
-    //   scheme: 'bearer',
-    //   bearerFormat: 'JWT',
-    // })
+    .addSecurity('JWT', {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    })
     .setContact(
       'Mohammed Moataz',
       'https://mohammed-moataz.vercel.app/',
@@ -49,7 +49,6 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs', app, swaggerDocument)
 
   const PORT = process.env.PORT as string
-
   await app.listen(parseInt(PORT))
 }
 
