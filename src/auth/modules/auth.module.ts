@@ -28,6 +28,7 @@ import { AuthService } from '../services/auth.service'
 import { AuthController } from '../controllers/auth.controller'
 import { UserModule } from 'src/modules/user/user.module'
 import { LocalStrategy } from '../strategies/local.strategy'
+import { JwtStrategy } from '../strategies/jwt.strategy'
 
 config()
 
@@ -42,11 +43,12 @@ const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string
     }),
     UserModule
   ],
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
   exports: [
     JwtModule,
-    PassportModule
+    PassportModule,
+    AuthService
   ]
 })
 

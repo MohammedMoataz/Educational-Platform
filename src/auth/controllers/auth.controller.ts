@@ -19,10 +19,11 @@ import { Request } from 'express'
 
 import { AuthService } from './../services/auth.service'
 import { LoginDto, SignUpDto } from './../dto/auth.dto'
-import { Tokens } from 'src/utils/types'
-import { RTGuard } from '../common/guards'
-import { LocalGuard } from '../common/guards/local.guard'
+// import { RTGuard } from '../common/guards'
 import { CreateUserInterceptor } from 'src/interceptors/user.interceptor'
+import { Tokens } from 'src/utils/types'
+import JWTGuard from '../common/guards/jwt.guard'
+import LocalGuard from '../common/guards/local.guard'
 
 @Controller()
 @ApiTags("Auth APIs")
@@ -41,14 +42,17 @@ export class AuthController {
     @Post('signin')
     // @UseGuards(LocalGuard)
     async signIn(@Body() loginDto: LoginDto): Promise<Tokens> {
+        console.log('sign')
         let tokens = this.authService.signIn(loginDto)
 
         if (!tokens) throw new UnauthorizedException('Wrong email or password')
-        else return tokens
+        console.log({ tokens })
+
+        return tokens
     }
 
-    // @ApiBearerAuth('JWT')
-    // @UseGuards(RTGuard)
+    @ApiBearerAuth('JWT')
+    @UseGuards(JWTGuard)
     @HttpCode(HttpStatus.OK)
     @Post('refreshtoken')
     async refreshToken(@Req() req: Request) {
@@ -56,11 +60,12 @@ export class AuthController {
         return this.authService.refreshToken(user['id'], user['refresh_token'])
     }
 
-    // @ApiBearerAuth('JWT')
+    @ApiBearerAuth('JWT')
+    @UseGuards(JWTGuard)
     @HttpCode(HttpStatus.OK)
     @Post('logout')
     async logout(@Req() req: Request): Promise<string> {
         const user = req.user
-        return this.authService.logout(user["sub"])
+        return this.authService.logout(user["id"])
     }
 }

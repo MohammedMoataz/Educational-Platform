@@ -34,6 +34,8 @@ import {
   CreateLogger,
   UpdateLogger
 } from './middlewares/date-logger.middleware'
+import { AuthController } from './auth/controllers/auth.controller'
+import { AuthService } from './auth/services/auth.service'
 
 config()
 
@@ -78,8 +80,8 @@ const DB_PASSWORD = process.env.DB_PASSWORD as string
     AssessmentModule,
     AssessmentSubmissionModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AuthController],
+  providers: [AuthService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

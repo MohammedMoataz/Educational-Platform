@@ -1,5 +1,4 @@
 import {
-    CanActivate,
     ExecutionContext,
     Injectable,
     UnauthorizedException,
@@ -7,16 +6,25 @@ import {
 import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express'
 import { config } from 'dotenv'
+import { AuthGuard } from '@nestjs/passport'
+import { Observable } from 'rxjs'
 
 config()
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string
 
 @Injectable()
-export default class AuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) { }
+export default class JwtAuthGuard extends AuthGuard('jwt') {
+    constructor(private jwtService: JwtService) {
+        super()
+    }
 
-    async canActivate(context: ExecutionContext): Promise<boolean> {
+    canActivate(
+        context: ExecutionContext,
+    ): boolean | Promise<boolean> | Observable<boolean> {
+        console.log('Inside JWT AuthGuard canActivate')
+        console.log(context.switchToHttp().getRequest().body)
+        
         const request = context.switchToHttp().getRequest()
         const token = this.extractTokenFromHeader(request)
 
@@ -24,19 +32,17 @@ export default class AuthGuard implements CanActivate {
             throw new UnauthorizedException()
 
         try {
-            const payload = await this.jwtService.verifyAsync(
+            const payload = this.jwtService.verifyAsync(
                 token,
                 { secret: ACCESS_TOKEN_SECRET }
             )
-            // 💡 We're assigning the payload to the request object here
-            // so that we can access it in our route handlers
             console.log({ payload })
             request['user'] = payload
         } catch {
             throw new UnauthorizedException()
         }
 
-        return true
+        return super.canActivate(context)
     }
 
     private extractTokenFromHeader(request: Request): string | undefined {

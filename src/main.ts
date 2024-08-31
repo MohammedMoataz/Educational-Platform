@@ -8,14 +8,13 @@ import { config } from 'dotenv'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
-import { ATGuard } from './auth/common/guards'
 
 config()
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.useGlobalPipes(new ValidationPipe())
-  // app.useGlobalGuards(new ATGuard())
+  // app.useGlobalGuards(new AuthGuard())
   app.enableCors()
   app.use(helmet())
 

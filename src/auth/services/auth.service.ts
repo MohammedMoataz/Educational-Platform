@@ -3,13 +3,8 @@ import {
     UnauthorizedException
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { PassportStrategy } from '@nestjs/passport'
-import {
-    ExtractJwt,
-    Strategy
-} from 'passport-jwt'
-import { plainToClass } from 'class-transformer'
 import { config } from 'dotenv'
+import { plainToClass } from 'class-transformer'
 
 import { CreateUserDto, UserDto } from 'src/DTO/user.dto'
 import { UserService } from 'src/services/user/user.service'
@@ -42,11 +37,14 @@ export class AuthService {
     async signIn(loginDto: LoginDto): Promise<Tokens> {
         const user = await this.userService.signIn(loginDto.email)
         if (!user || user.disabled) return null
+        console.log({ user })
 
         const isPasswordMatchs = await compareHashedData(loginDto.password, user.password_hash)
         if (!isPasswordMatchs) return null
 
-        const tokens = await this.getTokens(user)
+        const userDTO = plainToClass(UserDto, user)
+        console.log({ userDTO })
+        const tokens = await this.getTokens(userDTO)
 
         await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
 
@@ -56,7 +54,9 @@ export class AuthService {
     async signUp(signupDto: SignUpDto): Promise<Tokens> {
         const user = await this.userService.create(plainToClass(CreateUserDto, signupDto))
 
-        return await this.getTokens(user)
+        const userDTO = plainToClass(UserDto, user)
+        console.log({ userDTO })
+        return await this.getTokens(userDTO)
     }
 
     async refreshToken(id: string, refresh_token: string): Promise<any> {
@@ -78,7 +78,7 @@ export class AuthService {
     }
 
     private async getTokens(user: User | UserDto): Promise<Tokens> {
-        const [at, rt] = await Promise.all([
+        const [access_token, refresh_token] = await Promise.all([
             this.jwtService.signAsync(
                 { payload: plainToClass(UserDto, user) },
                 { expiresIn: '1h', secret: ACCESS_TOKEN_SECRET }),
@@ -87,21 +87,21 @@ export class AuthService {
                 { expiresIn: '1h', secret: REFRESH_TOKEN_SECRET }),
         ])
 
-        return { access_token: at, refresh_token: rt }
+        return { access_token, refresh_token }
     }
 
     async updateRefreshToken(rtDto: RTDto) {
         await this.userService.updateRefreshToken(rtDto.uuid, rtDto.refresh_token)
     }
 
-    login(user: { username: any; userId: any }) {
-        const payload = { username: user.username, sub: user.userId }
+    login(user: { email: any; userId: any }) {
+        const payload = { email: user.email, sub: user.userId }
 
         return { access_token: this.jwtService.sign(payload, this.jwtOptions) }
     }
 
-    validate(payload: { sub: any; username: any }) {
-        return { userId: payload.sub, username: payload.username }
+    validate(payload: { sub: any; email: any }) {
+        return { userId: payload.sub, email: payload.email }
     }
 }
 
