@@ -42,9 +42,10 @@ export class AuthService {
         const isPasswordMatchs = await compareHashedData(loginDto.password, user.password_hash)
         if (!isPasswordMatchs) return null
 
-        const userDTO = plainToClass(UserDto, user)
-        console.log({ userDTO })
-        const tokens = await this.getTokens(userDTO)
+        const userDto = plainToClass(UserDto, user)
+        userDto.refresh_token = null
+        console.log({ userDto })
+        const tokens = await this.getTokens(userDto)
 
         await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
 
@@ -63,10 +64,10 @@ export class AuthService {
         const user = await this.userService.findOneById(id)
         if (!user) throw new UnauthorizedException("User is not authorized")
 
-        // const isRefreshTokenMatches = await compareHashedData(refresh_token, user.refresh_token)
-        // if (!isRefreshTokenMatches) throw new UnauthorizedException("User is not authorized")
+        const userDto = plainToClass(UserDto, user)
+        userDto.refresh_token = null
 
-        const tokens = await this.getTokens(user)
+        const tokens = await this.getTokens(userDto)
         await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
 
         return tokens
@@ -104,58 +105,3 @@ export class AuthService {
         return { userId: payload.sub, email: payload.email }
     }
 }
-
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { AuthService } from './auth.service';
-// import { JwtService } from '@nestjs/jwt';
-// import { UserService } from '../user/user.service';
-
-// describe('AuthService', () => {
-//   let service: AuthService;
-//   let userService: UserService;
-//   let jwtService: JwtService;
-
-//   beforeEach(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       providers: [
-//         AuthService,
-//         {
-//           provide: UserService,
-//           useValue: {
-//             findOne: jest.fn(),
-//           },
-//         },
-//         {
-//           provide: JwtService,
-//           useValue: {
-//             sign: jest.fn(),
-//           },
-//         },
-//       ],
-//     }).compile();
-
-//     service = module.get<AuthService>(AuthService);
-//     userService = module.get<UserService>(UserService);
-//     jwtService = module.get<JwtService>(JwtService);
-//   });
-
-//   it('should return an access token', async () => {
-//     const user = { username: 'test', userId: 1 };
-//     const findOneSpy = jest.spyOn(userService, 'findOne').mockResolvedValue(user);
-//     const signSpy = jest.spyOn(jwtService, 'sign').mockReturnValue('access_token');
-
-//     const result = await service.login(user);
-
-//     expect(findOneSpy).toHaveBeenCalledWith(user.userId);
-//     expect(signSpy).toHaveBeenCalledWith({ username: user.username, sub: user.userId }, expect.any(Object));
-//     expect(result).toEqual({ access_token: 'access_token' });
-//   });
-
-//   it('should throw an error if user is not found', async () => {
-//     const userId = 1;
-//     const findOneSpy = jest.spyOn(userService, 'findOne').mockResolvedValue(null);
-
-//     await expect(service.login({ username: 'test', userId })).rejects.toThrowError(`User with id ${ userId } not found`);
-//     expect(findOneSpy).toHaveBeenCalledWith(userId);
-//   });
-// });

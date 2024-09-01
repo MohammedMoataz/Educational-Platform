@@ -24,7 +24,7 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
     ): boolean | Promise<boolean> | Observable<boolean> {
         console.log('Inside JWT AuthGuard canActivate')
         console.log(context.switchToHttp().getRequest().body)
-        
+
         const request = context.switchToHttp().getRequest()
         const token = this.extractTokenFromHeader(request)
 
@@ -36,8 +36,7 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
                 token,
                 { secret: ACCESS_TOKEN_SECRET }
             )
-            console.log({ payload })
-            request['user'] = payload
+            console.log(payload)
         } catch {
             throw new UnauthorizedException()
         }

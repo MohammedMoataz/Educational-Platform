@@ -4,7 +4,6 @@ import {
     ExtractJwt,
     Strategy
 } from 'passport-jwt'
-import { Request } from 'express'
 import { config } from 'dotenv'
 
 config()
@@ -23,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     async validate(payload: any) {
         console.log('Inside JWT Strategy Validate')
-        console.log({ payload })
+        console.log(payload)
         return payload
     }
 }

@@ -36,7 +36,7 @@ async function bootstrap() {
     .setContact(
       'Mohammed Moataz',
       'https://mohammed-moataz.vercel.app/',
-      'mohammed.moataz@gmail.com',
+      'imohammed.moataz@gmail.com',
     )
     .setExternalDoc(
       'Documentations - Google Docs',
