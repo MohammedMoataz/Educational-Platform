@@ -31,15 +31,12 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
         if (!token)
             throw new UnauthorizedException()
 
-        try {
-            const payload = this.jwtService.verifyAsync(
-                token,
-                { secret: ACCESS_TOKEN_SECRET }
-            )
-            console.log(payload)
-        } catch {
-            throw new UnauthorizedException()
-        }
+        this.jwtService.verifyAsync(
+            token,
+            { secret: ACCESS_TOKEN_SECRET }
+        )
+            .then(payload => console.log(payload))
+            .catch(() => { throw new UnauthorizedException() })
 
         return super.canActivate(context)
     }

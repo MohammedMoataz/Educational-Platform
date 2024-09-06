@@ -47,7 +47,8 @@ export class AuthService {
         console.log({ userDto })
         const tokens = await this.getTokens(userDto)
 
-        await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
+        const result = await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
+        console.log({ result })
 
         return tokens
     }
@@ -62,7 +63,7 @@ export class AuthService {
 
     async refreshToken(id: string, refresh_token: string): Promise<any> {
         const user = await this.userService.findOneById(id)
-        if (!user) throw new UnauthorizedException("User is not authorized")
+        if (!user || user.refresh_token === null) throw new UnauthorizedException("User is not authorized")
 
         const userDto = plainToClass(UserDto, user)
         userDto.refresh_token = null
@@ -93,15 +94,5 @@ export class AuthService {
 
     async updateRefreshToken(rtDto: RTDto) {
         await this.userService.updateRefreshToken(rtDto.uuid, rtDto.refresh_token)
-    }
-
-    login(user: { email: any; userId: any }) {
-        const payload = { email: user.email, sub: user.userId }
-
-        return { access_token: this.jwtService.sign(payload, this.jwtOptions) }
-    }
-
-    validate(payload: { sub: any; email: any }) {
-        return { userId: payload.sub, email: payload.email }
     }
 }

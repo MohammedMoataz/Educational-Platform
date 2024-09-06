@@ -19,11 +19,9 @@ import { Request } from 'express'
 
 import { AuthService } from './../services/auth.service'
 import { LoginDto, SignUpDto } from './../dto/auth.dto'
-// import { RTGuard } from '../common/guards'
 import { CreateUserInterceptor } from 'src/interceptors/user.interceptor'
 import { Tokens } from 'src/utils/types'
-import JWTGuard from '../common/guards/jwt.guard'
-import LocalGuard from '../common/guards/local.guard'
+import JWTGuard from '../guards/jwt.guard'
 
 @Controller()
 @ApiTags("Auth APIs")
@@ -40,7 +38,6 @@ export class AuthController {
 
 
     @Post('signin')
-    // @UseGuards(LocalGuard)
     async signIn(@Body() loginDto: LoginDto): Promise<Tokens> {
         console.log('sign')
         let tokens = this.authService.signIn(loginDto)
@@ -57,7 +54,7 @@ export class AuthController {
     @Post('refreshtoken')
     async refreshToken(@Req() req: Request) {
         const user = req.user
-        return this.authService.refreshToken(user['id'], user['refresh_token'])
+        return this.authService.refreshToken(user['uuid'], user['refresh_token'])
     }
 
     @ApiBearerAuth('JWT')
@@ -66,6 +63,7 @@ export class AuthController {
     @Post('logout')
     async logout(@Req() req: Request): Promise<string> {
         const user = req.user
-        return this.authService.logout(user["id"])
+        console.log(user)
+        return this.authService.logout(user["uuid"])
     }
 }

@@ -1,6 +1,7 @@
 import {
     Injectable,
-    NotFoundException
+    NotFoundException,
+    UnauthorizedException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
@@ -73,6 +74,7 @@ export class UserService {
         if (!user)
             throw new NotFoundException(`User with id: ${id} not found`)
 
+        console.log({ id, refresh_token })
         return await this.userRepository.update({ uuid: id }, { refresh_token })
     }
 
@@ -97,6 +99,6 @@ export class UserService {
         })
 
         if (!user) throw new NotFoundException(`User with email: ${email} not found`)
-        else return user
+        return user
     }
 }

@@ -34,6 +34,7 @@ export const hashData = async (
 
     // Generate the hashed payload using the generated salt.
     return new Promise<string>((resolve, reject) => {
+        console.log({ payload, salt })
         bcrypt.hash(payload, salt, (err, encrypted) => {
             err ? reject(err) : resolve(encrypted)
         })

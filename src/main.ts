@@ -14,7 +14,6 @@ config()
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.useGlobalPipes(new ValidationPipe())
-  // app.useGlobalGuards(new AuthGuard())
   app.enableCors()
   app.use(helmet())
 

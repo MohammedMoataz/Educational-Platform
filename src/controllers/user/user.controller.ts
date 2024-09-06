@@ -1,12 +1,10 @@
 import {
     Body,
-    ClassSerializerInterceptor,
     Controller,
     Delete,
     Get,
     HttpException,
     HttpStatus,
-    ParseIntPipe,
     Post,
     Put,
     Query,
@@ -20,8 +18,8 @@ import {
     ApiOperation,
     ApiTags
 } from '@nestjs/swagger'
-import JWTAuthGuard from 'src/auth/common/guards/jwt.guard'
 
+import JWTAuthGuard from 'src/auth/guards/jwt.guard'
 import {
     CreateUserDto,
     UpdateUserDto
@@ -31,19 +29,20 @@ import { UserService } from 'src/services/user/user.service'
 
 @Controller('/user')
 @ApiTags('User APIs')
-// @ApiBearerAuth('JWT')
+@ApiBearerAuth('JWT')
 export class UserController {
     constructor(private userService: UserService) { }
 
     @Get('all')
-    // @ApiOperation({ summary: 'summary goes here', description: 'description goes here' })
+    @ApiOperation({ summary: 'summary goes here', description: 'description goes here' })
+    @UseGuards(JWTAuthGuard)
     async getUsers() {
         return this.userService.findAll()
     }
 
     @Get()
     @UsePipes(ValidationPipe)
-    // @UseGuards(JWTAuthGuard)
+    @UseGuards(JWTAuthGuard)
     async getUser(@Query('id') id: string) {
         const user = this.userService.findOneById(id)
 
@@ -54,12 +53,14 @@ export class UserController {
     @Post()
     @UsePipes(ValidationPipe)
     @UseInterceptors(CreateUserInterceptor)
+    @UseGuards(JWTAuthGuard)
     async createUser(@Body() newUser: CreateUserDto) {
         return this.userService.create(newUser)
     }
 
     @Put()
     @UsePipes(ValidationPipe)
+    @UseGuards(JWTAuthGuard)
     async updateUser(@Query('id') id: string, @Body() updatedUser: UpdateUserDto) {
         return this.userService.update(id, updatedUser)
             .then(() => "User updated successfully")
@@ -68,6 +69,7 @@ export class UserController {
 
     @Delete()
     @UsePipes(ValidationPipe)
+    @UseGuards(JWTAuthGuard)
     async removeUser(@Query('id') id: string) {
         return this.userService.remove(id)
             .then(() => "User deleted successfully")
