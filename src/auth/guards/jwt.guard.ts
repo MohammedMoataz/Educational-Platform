@@ -23,6 +23,7 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
         console.log('Inside JWT AuthGuard canActivate')
+        this.jwtService = new JwtService()
 
         const request = context.switchToHttp().getRequest()
         const token = this.extractTokenFromHeader(request)

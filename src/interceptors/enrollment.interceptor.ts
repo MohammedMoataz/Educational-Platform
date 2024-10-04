@@ -15,6 +15,7 @@ import { EnrollmentDto } from "src/DTO/enrollment.dto"
 @Injectable()
 export class CreateEnrollmentInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> | Promise<Observable<any>> {
+        console.log('Inside CreateEnrollmentInterceptor')
         return next.handle().pipe(map(enrollment => plainToClass(EnrollmentDto, enrollment)))
     }
 }

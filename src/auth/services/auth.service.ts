@@ -38,14 +38,12 @@ export class AuthService {
     async signIn(loginDto: LoginDto): Promise<Tokens> {
         const user = await this.userService.signIn(loginDto.email)
         if (!user || user.disabled) return null
-        console.log({ user })
 
         const isPasswordMatchs = await compareHashedData(loginDto.password, user.password_hash)
         if (!isPasswordMatchs) return null
 
         const userDto = plainToClass(UserDto, user)
         userDto.refresh_token = null
-        console.log({ userDto })
         const tokens = await this.getTokens(userDto)
 
         await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)

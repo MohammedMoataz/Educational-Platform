@@ -30,7 +30,6 @@ export class EnrollmentService {
 
     async findAllbyUser(student_id: string): Promise<EnrollmentDto[]> {
         const user = await this.userRepository.findOneBy({ uuid: student_id })
-
         if (!user._deleted_at)
             return await this.enrollmentRepository.find({
                 where: {
