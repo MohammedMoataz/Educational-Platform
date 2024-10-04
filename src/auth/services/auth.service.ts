@@ -1,4 +1,5 @@
 import {
+    ConflictException,
     Injectable,
     UnauthorizedException
 } from '@nestjs/common'
@@ -8,7 +9,7 @@ import { plainToClass } from 'class-transformer'
 
 import { CreateUserDto, UserDto } from 'src/DTO/user.dto'
 import { UserService } from 'src/services/user/user.service'
-import { compareHashedData } from 'src/utils/helper'
+import { compareHashedData, verifyRefreshToken } from 'src/utils/helper'
 import { Tokens } from 'src/utils/types'
 import { User } from 'src/entities/user.entity'
 import {
@@ -47,18 +48,15 @@ export class AuthService {
         console.log({ userDto })
         const tokens = await this.getTokens(userDto)
 
-        const result = await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
-        console.log({ result })
+        await this.userService.updateRefreshToken(user.uuid, tokens.refresh_token)
 
         return tokens
     }
 
-    async signUp(signupDto: SignUpDto): Promise<Tokens> {
+    async signUp(signupDto: SignUpDto): Promise<UserDto> {
         const user = await this.userService.create(plainToClass(CreateUserDto, signupDto))
 
-        const userDTO = plainToClass(UserDto, user)
-        console.log({ userDTO })
-        return await this.getTokens(userDTO)
+        return plainToClass(UserDto, user)
     }
 
     async refreshToken(id: string, refresh_token: string): Promise<any> {

@@ -36,6 +36,7 @@ export class UserDto {
     @IsBoolean()
     disabled: boolean
     @ApiProperty()
+    @Exclude()
     refresh_token: string
     @ApiProperty()
     courses: CourseDto[]

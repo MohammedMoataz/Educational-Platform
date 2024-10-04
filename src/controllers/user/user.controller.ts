@@ -8,6 +8,8 @@ import {
     Post,
     Put,
     Query,
+    Req,
+    UnauthorizedException,
     UseGuards,
     UseInterceptors,
     UsePipes,
@@ -18,6 +20,7 @@ import {
     ApiOperation,
     ApiTags
 } from '@nestjs/swagger'
+import { Request } from 'express'
 
 import JWTAuthGuard from 'src/auth/guards/jwt.guard'
 import {
@@ -26,6 +29,7 @@ import {
 } from 'src/DTO/user.dto'
 import { CreateUserInterceptor } from 'src/interceptors/user.interceptor'
 import { UserService } from 'src/services/user/user.service'
+import { ROLES } from 'src/utils/constants'
 
 @Controller('/user')
 @ApiTags('User APIs')
@@ -36,8 +40,9 @@ export class UserController {
     @Get('all')
     @ApiOperation({ summary: 'summary goes here', description: 'description goes here' })
     @UseGuards(JWTAuthGuard)
-    async getUsers() {
-        return this.userService.findAll()
+    async getUsers(@Req() request: Request) {
+        if (request['role'] === ROLES.ADMIN) return this.userService.findAll()
+        else throw new UnauthorizedException("You are not allowed to...")
     }
 
     @Get()

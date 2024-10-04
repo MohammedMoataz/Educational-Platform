@@ -47,7 +47,6 @@ export class UserService {
     }
 
     async create(newUser: CreateUserDto): Promise<User> {
-        console.log({ newUser })
         newUser["password_hash"] = await hashData(newUser.password)
 
         return await this.userRepository.save(newUser)
@@ -74,7 +73,6 @@ export class UserService {
         if (!user)
             throw new NotFoundException(`User with id: ${id} not found`)
 
-        console.log({ id, refresh_token })
         return await this.userRepository.update({ uuid: id }, { refresh_token })
     }
 
