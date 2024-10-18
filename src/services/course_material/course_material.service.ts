@@ -41,7 +41,7 @@ export class CourseMaterialService {
             .then(courseMateials => courseMateials.map(courseMateial => plainToClass(CourseMaterialDto, courseMateial)))
 
         if (!courseMateials)
-            throw new NotFoundException(`courseMateials not found`)
+            throw new NotFoundException(`course mateials not found`)
 
         return courseMateials
     }
@@ -52,7 +52,7 @@ export class CourseMaterialService {
         })
 
         if (courseMaterial._deleted_at === null) return plainToClass(CourseMaterialDto, courseMaterial)
-        else throw new NotFoundException(`courseMaterial with id: ${id} not found`)
+        else throw new NotFoundException(`Course material not found`)
     }
 
     async create(newCourseMaterial: CreateCourseMaterialDto): Promise<CourseMaterialDto> {
@@ -68,14 +68,38 @@ export class CourseMaterialService {
     }
 
     async update(id: string, updatedCourseMaterial: UpdateCourseMaterialDto): Promise<any> {
-        return await this.courseMaterialRepository.update({ uuid: id }, updatedCourseMaterial)
+        const courseMaterial = await this.courseMaterialRepository.findOneBy({
+            uuid: id,
+            _deleted_at: IsNull()
+        })
+        const course = await this.courseRepository.findOneBy({
+            uuid: updatedCourseMaterial.course_uuid,
+            _deleted_at: IsNull()
+        })
+
+        if (!courseMaterial)
+            throw new NotFoundException(`Course with id: ${id} not found`)
+
+        if (course) {
+            const result = await this.courseMaterialRepository.update({ uuid: id }, {
+                title: updatedCourseMaterial.title,
+                description: updatedCourseMaterial.description,
+                file_url: updatedCourseMaterial.file_url,
+                course_id: course.id,
+                _updated_at: new Date()
+            })
+
+            if (result) return "Course material was updated successfully"
+        } else {
+            throw new NotFoundException(`Course not found`)
+        }
     }
 
     async remove(id: string): Promise<any> {
         const courseMaterial = await this.courseMaterialRepository.findOneBy({ uuid: id })
 
         if (!courseMaterial || courseMaterial._deleted_at !== null)
-            throw new NotFoundException(`courseMaterial with id: ${id} not found`)
+            throw new NotFoundException(`This course material not found`)
 
         return this.courseMaterialRepository.update({ uuid: id }, { _deleted_at: new Date() })
             .then(() => "Course material was deleted successfully")
