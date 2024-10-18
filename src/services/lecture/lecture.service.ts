@@ -47,7 +47,7 @@ export class LectureService {
         })
 
         if (lecture) return plainToClass(LectureDto, lecture)
-        else throw new NotFoundException(`Lecture with id: ${id} not found`)
+        else throw new NotFoundException(`Lecture not found`)
     }
 
     async create(newLecture: CreateLectureDto): Promise<Lecture> {
@@ -71,9 +71,12 @@ export class LectureService {
         })
 
         if (!lecture)
-            throw new NotFoundException(`Lecture with id: ${id} not found`)
+            throw new NotFoundException(`Lecture not found`)
 
-        return await this.lectureRepository.update({ uuid: id }, updatedLecture)
+        const result = await this.lectureRepository.update({ uuid: id }, updatedLecture)
+
+        if (result) return "Lecture was updated successfully"
+        else throw new NotFoundException(`Lecture not found`)
     }
 
     async remove(id: string): Promise<any> {
@@ -83,7 +86,7 @@ export class LectureService {
         })
 
         if (!lecture)
-            throw new NotFoundException(`lecture with id: ${id} not found`)
+            throw new NotFoundException(`lecture not found`)
 
         return this.lectureRepository.update({ uuid: id }, { _deleted_at: new Date() })
             .then(() => "Lecture was deleted successfully")
