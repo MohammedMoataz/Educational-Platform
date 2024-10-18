@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { IsNull, Repository } from 'typeorm'
 import { plainToClass } from 'class-transformer'
@@ -23,7 +23,10 @@ export class AttendanceService {
     ) { }
 
     async findAllByStudent(student_id: string): Promise<AttendanceDto[]> {
-        const user = await this.userRepository.findOneBy({ uuid: student_id })
+        const user = await this.userRepository.findOneBy({
+            uuid: student_id,
+            _deleted_at: IsNull()
+        })
 
         if (!user || user._deleted_at !== null)
             throw new NotFoundException(`User not found`)
@@ -35,10 +38,14 @@ export class AttendanceService {
             },
         })
             .then(attendances => attendances.map(attendance => plainToClass(AttendanceDto, attendance)))
+            .catch(err => { throw new BadRequestException(err.message) })
     }
 
     async findAllByLecture(lecture_id: string): Promise<AttendanceDto[]> {
-        const lecture = await this.lectureRepository.findOneBy({ uuid: lecture_id })
+        const lecture = await this.lectureRepository.findOneBy({
+            uuid: lecture_id,
+            _deleted_at: IsNull()
+        })
 
         if (!lecture || lecture._deleted_at !== null)
             throw new NotFoundException(`Lecture not found`)
@@ -50,11 +57,18 @@ export class AttendanceService {
             },
         })
             .then(attendances => attendances.map(attendance => plainToClass(AttendanceDto, attendance)))
+            .catch(err => { throw new BadRequestException(err.message) })
     }
 
     async findAttendance(student_id: string, lecture_id: string): Promise<AttendanceDto> {
-        const user = await this.userRepository.findOneBy({ uuid: student_id })
-        const lecture = await this.lectureRepository.findOneBy({ uuid: lecture_id })
+        const user = await this.userRepository.findOneBy({
+            uuid: student_id,
+            _deleted_at: IsNull()
+        })
+        const lecture = await this.lectureRepository.findOneBy({
+            uuid: lecture_id,
+            _deleted_at: IsNull()
+        })
 
         if (!user || !lecture || user._deleted_at !== null || lecture._deleted_at !== null)
             throw new NotFoundException(`User or lecture not found`)
@@ -67,12 +81,21 @@ export class AttendanceService {
             },
         })
 
+        if (!attendance)
+            throw new NotFoundException(`Attendance not found`)
+
         return plainToClass(AttendanceDto, attendance)
     }
 
     async create(newAttendance: CreateAttendanceDto): Promise<AttendanceDto> {
-        const user = await this.userRepository.findOneBy({ uuid: newAttendance.student_uuid })
-        const lecture = await this.lectureRepository.findOneBy({ uuid: newAttendance.lecture_uuid })
+        const user = await this.userRepository.findOneBy({
+            uuid: newAttendance.student_uuid,
+            _deleted_at: IsNull()
+        })
+        const lecture = await this.lectureRepository.findOneBy({
+            uuid: newAttendance.lecture_uuid,
+            _deleted_at: IsNull()
+        })
 
         if (!user || !lecture || user._deleted_at !== null || lecture._deleted_at !== null)
             throw new NotFoundException(`User or lecture not found`)
@@ -86,8 +109,14 @@ export class AttendanceService {
     }
 
     async remove(student_id: string, lecture_id: string): Promise<any> {
-        const user = await this.userRepository.findOneBy({ uuid: student_id })
-        const lecture = await this.lectureRepository.findOneBy({ uuid: lecture_id })
+        const user = await this.userRepository.findOneBy({
+            uuid: student_id,
+            _deleted_at: IsNull()
+        })
+        const lecture = await this.lectureRepository.findOneBy({
+            uuid: lecture_id,
+            _deleted_at: IsNull()
+        })
 
         if (!user || !lecture || user._deleted_at !== null || lecture._deleted_at !== null)
             throw new NotFoundException(`User or lecture not found`)
@@ -95,7 +124,8 @@ export class AttendanceService {
         const attendance = await this.attendanceRepository.findOne({
             where: {
                 student_id: user.id,
-                lecture_id: lecture.id
+                lecture_id: lecture.id,
+                _deleted_at: IsNull()
             }
         })
 
