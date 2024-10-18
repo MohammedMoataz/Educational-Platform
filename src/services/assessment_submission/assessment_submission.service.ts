@@ -3,7 +3,7 @@ import {
     NotFoundException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { IsNull, Repository } from 'typeorm'
 import { plainToClass } from 'class-transformer'
 
 import { AssessmentSubmission } from 'src/entities/assessment_submission.entity'
@@ -26,9 +26,12 @@ export class AssessmentSubmissionService {
     ) { }
 
     async findAllByStudent(student_id: string): Promise<AssessmentSubmissionDto[]> {
-        const student = await this.userRepository.findOneBy({ uuid: student_id })
+        const student = await this.userRepository.findOneBy({
+            uuid: student_id,
+            _deleted_at: IsNull()
+        })
 
-        if (!student || student._deleted_at !== null)
+        if (!student)
             throw new NotFoundException(`User or assessment not found`)
 
         return await this.assessmentSubmissionRepository.find({
@@ -38,9 +41,12 @@ export class AssessmentSubmissionService {
     }
 
     async findAllByAssessment(assessment_id: string): Promise<AssessmentSubmissionDto[]> {
-        const assessment = await this.assessmentRepository.findOneBy({ uuid: assessment_id })
+        const assessment = await this.assessmentRepository.findOneBy({
+            uuid: assessment_id,
+            _deleted_at: IsNull()
+        })
 
-        if (!assessment || assessment._deleted_at !== null)
+        if (!assessment)
             throw new NotFoundException(`User or assessment not found`)
 
         return await this.assessmentSubmissionRepository.find({
@@ -50,10 +56,16 @@ export class AssessmentSubmissionService {
     }
 
     async findAssessmentSubmission(student_id: string, assessment_id: string): Promise<AssessmentSubmissionDto> {
-        const student = await this.userRepository.findOneBy({ uuid: student_id })
-        const assessment = await this.assessmentRepository.findOneBy({ uuid: assessment_id })
+        const student = await this.userRepository.findOneBy({
+            uuid: student_id,
+            _deleted_at: IsNull()
+        })
+        const assessment = await this.assessmentRepository.findOneBy({
+            uuid: assessment_id,
+            _deleted_at: IsNull()
+        })
 
-        if (!student || !assessment || student._deleted_at !== null || assessment._deleted_at !== null)
+        if (!student || !assessment)
             throw new NotFoundException(`Student or assessment not found`)
 
         const assessmentSubmission = await this.assessmentSubmissionRepository.findOne({
@@ -67,14 +79,20 @@ export class AssessmentSubmissionService {
     }
 
     async create(newAssessmentSubmission: CreateAssessmentSubmissionDto): Promise<AssessmentSubmissionDto> {
-        const user = await this.userRepository.findOneBy({ uuid: newAssessmentSubmission.student_uuid })
-        const assessment = await this.assessmentRepository.findOneBy({ uuid: newAssessmentSubmission.assessment_uuid })
+        const user = await this.userRepository.findOneBy({
+            uuid: newAssessmentSubmission.student_uuid,
+            _deleted_at: IsNull()
+        })
+        const assessment = await this.assessmentRepository.findOneBy({
+            uuid: newAssessmentSubmission.assessment_uuid,
+            _deleted_at: IsNull()
+        })
+
+        if (!user || !assessment)
+            throw new NotFoundException(`User or assessment not found`)
 
         newAssessmentSubmission["student_id"] = user.id
         newAssessmentSubmission["assessment_id"] = assessment.id
-
-        if (!user || !assessment || user._deleted_at !== null || assessment._deleted_at !== null)
-            throw new NotFoundException(`User or assessment not found`)
 
         const assessmentSubmission = await this.assessmentSubmissionRepository.save(newAssessmentSubmission)
         return plainToClass(AssessmentSubmissionDto, assessmentSubmission)
