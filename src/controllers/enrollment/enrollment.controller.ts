@@ -15,11 +15,11 @@ import {
     ApiBearerAuth,
     ApiTags
 } from '@nestjs/swagger'
-import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 import { CreateEnrollmentDto } from 'src/DTO/enrollment.dto'
 import { CreateEnrollmentInterceptor } from 'src/interceptors/enrollment.interceptor'
 import { EnrollmentService } from 'src/services/enrollment/enrollment.service'
+import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 @ApiBearerAuth('JWT')
 @Controller()

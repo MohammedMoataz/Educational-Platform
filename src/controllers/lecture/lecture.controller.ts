@@ -15,7 +15,6 @@ import {
     ApiBearerAuth,
     ApiTags
 } from '@nestjs/swagger'
-import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 import {
     CreateLectureDto,
@@ -23,6 +22,7 @@ import {
 } from 'src/DTO/lecture.dto'
 import { CreateLectureInterceptor } from 'src/interceptors/lecture.interceptor'
 import { LectureService } from 'src/services/lecture/lecture.service'
+import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 @ApiTags('Lecture APIs')
 @ApiBearerAuth('JWT')

@@ -16,11 +16,11 @@ import {
     ApiBearerAuth,
     ApiTags
 } from '@nestjs/swagger'
-import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 import { CreateCourseDto, UpdateCourseDto } from 'src/DTO/course.dto'
 import { CreateCourseInterceptor } from 'src/interceptors/course.interceptor'
 import { CourseService } from 'src/services/course/course.service'
+import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 @ApiTags("Course APIs")
 @ApiBearerAuth('JWT')

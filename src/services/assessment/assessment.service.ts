@@ -24,7 +24,13 @@ export class AssessmentService {
     ) { }
 
     async findAllByLecture(lecture_id: string): Promise<AssessmentDto[]> {
-        const lecture = await this.lectureRepository.findOneBy({ uuid: lecture_id })
+        const lecture = await this.lectureRepository.findOneBy({
+            uuid: lecture_id,
+            _deleted_at: IsNull()
+        })
+
+        if (!lecture)
+            throw new NotFoundException(`lecture not found`)
 
         return await this.assessmentRepository.find({
             where: {
@@ -37,16 +43,25 @@ export class AssessmentService {
 
     async findAssessmentById(id: string): Promise<AssessmentDto> {
         const assessment = await this.assessmentRepository.findOne({
-            where: { uuid: id },
+            where: {
+                uuid: id,
+                _deleted_at: IsNull()
+            },
         })
+
+        if (!assessment)
+            throw new NotFoundException(`assessment not found`)
 
         return plainToClass(AssessmentDto, assessment)
     }
 
     async create(newAssessment: CreateAssessmentDto): Promise<AssessmentDto> {
-        const lecture = await this.lectureRepository.findOneBy({ uuid: newAssessment.lecture_uuid })
+        const lecture = await this.lectureRepository.findOneBy({
+            uuid: newAssessment.lecture_uuid,
+            _deleted_at: IsNull()
+        })
 
-        if (!lecture || lecture._deleted_at !== null)
+        if (!lecture)
             throw new NotFoundException(`lecture not found`)
 
         newAssessment["lecture_id"] = lecture.id
@@ -56,19 +71,28 @@ export class AssessmentService {
     }
 
     async update(id: string, updatedAssessment: UpdateAssessmentDto): Promise<any> {
-        const assessment = await this.assessmentRepository.findOneBy({ uuid: id })
+        const assessment = await this.assessmentRepository.findOneBy({
+            uuid: id,
+            _deleted_at: IsNull()
+        })
 
-        if (!assessment || assessment._deleted_at !== null)
-            throw new NotFoundException(`assessment with id: ${id} not found`)
+        if (!assessment)
+            throw new NotFoundException(`assessment not found`)
 
-        return await this.assessmentRepository.update({ id: assessment.id }, updatedAssessment)
+        const result = await this.assessmentRepository.update({ id: assessment.id }, updatedAssessment)
+
+        if (result) return "Assessment was updated successfully"
+        else throw new NotFoundException(`assessment not found`)
     }
 
     async remove(id: string): Promise<any> {
-        const assessment = await this.assessmentRepository.findOneBy({ uuid: id })
+        const assessment = await this.assessmentRepository.findOneBy({
+            uuid: id,
+            _deleted_at: IsNull()
+        })
 
-        if (!assessment || assessment._deleted_at !== null)
-            throw new NotFoundException(`assessment with id: ${id} not found`)
+        if (!assessment)
+            throw new NotFoundException(`assessment not found`)
 
         return this.assessmentRepository.update({ id: assessment.id }, { _deleted_at: new Date() })
             .then(() => "Assessment was deleted successfully")

@@ -13,7 +13,6 @@ import {
     ValidationPipe
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 import {
     CreateCourseMaterialDto,
@@ -21,6 +20,7 @@ import {
 } from 'src/DTO/course_material.dto'
 import { CreateCourseMaterialInterceptor } from 'src/interceptors/course_material.interceptor'
 import { CourseMaterialService } from 'src/services/course_material/course_material.service'
+import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 @ApiTags("Course APIs")
 @ApiBearerAuth('JWT')

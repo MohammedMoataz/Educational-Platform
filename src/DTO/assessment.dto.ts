@@ -30,6 +30,9 @@ export class AssessmentDto {
     _created_at: Date
     @ApiProperty()
     _updated_at: Date
+    @ApiProperty()
+    @Exclude()
+    _deleted_at: Date
 }
 
 export class CreateAssessmentDto {

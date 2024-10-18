@@ -10,10 +10,10 @@ import {
     ValidationPipe,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 import { CreateAttendanceDto } from 'src/DTO/attendance.dto'
 import { AttendanceService } from 'src/services/attendance/attendance.service'
+import JwtAuthGuard from 'src/auth/guards/jwt.guard'
 
 @ApiBearerAuth('JWT')
 @Controller()
